@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-3">
+  <!-- Applied Flash Banner (If just applied) -->
+  {% if session.get('last_applied_shop') %}
+    <div class="alert alert-success d-flex justify-content-between align-items-center py-2 px-3 mb-3 shadow-sm">
+      <div>
+        <i class="bi bi-check-circle-fill me-1"></i>
+        Applied to <strong>{{ session.get('last_applied_title', 'Job') }}</strong> · {{ session.get('last_applied_shop') }}.
+      </div>
+      <a href="{{ url_for('seeker.applications') }}" class="btn btn-sm btn-outline-success">Track in Applied</a>
+    </div>
+  {% endif %}
+
+  <!-- Header Title -->
+  <div class="d-flex justify-content-between align-items-baseline mb-3">
+    <div>
+      <h3 class="fw-bold mb-0 text-dark">Jobs near you. Today.</h3>
+      <span class="text-muted small">Pilot area: OMR / Anna Nagar</span>
+    </div>
+  </div>
+
+  <!-- Top Filter Bar -->
+  <div class="lv-card p-3 mb-3">
+    <form id="job-filters-form" method="GET" action="{{ url_for('seeker.jobs') }}">
+      <input type="hidden" name="day" id="filter-day-input" value="{{ selected_day }}">
+
+      <div class="row g-2 align-items-center">
+        <!-- Area Selector -->
+        <div class="col-md-4 col-sm-6">
+          <label class="form-label small fw-bold text-muted mb-1">Area</label>
+          <select name="area_id" class="form-select form-select-sm" onchange="this.form.submit()">
+            {% for a in areas %}
+              <option value="{{ a.id }}" {% if selected_area and selected_area.id == a.id %}selected{% endif %}>
+                {{ a.name }}, Chennai
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Radius Selector -->
+        <div class="col-md-3 col-sm-6">
+          <label class="form-label small fw-bold text-muted mb-1">Radius</label>
+          <select name="radius" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="1.0" {% if selected_radius == 1.0 %}selected{% endif %}>Within 1 km</option>
+            <option value="2.0" {% if selected_radius == 2.0 %}selected{% endif %}>Within 2 km</option>
+            <option value="3.0" {% if selected_radius == 3.0 %}selected{% endif %}>Within 3 km</option>
+          </select>
+        </div>
+
+        <!-- Quick Day Buttons -->
+        <div class="col-md-5 col-12 text-md-end mt-3 mt-md-0 pt-md-3">
+          <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-quick-day {% if selected_day == 'today' %}btn-primary active{% else %}btn-outline-secondary{% endif %}" data-day="today">
+              Today
+            </button>
+            <button type="button" class="btn btn-quick-day {% if selected_day == 'weekend' %}btn-primary active{% else %}btn-outline-secondary{% endif %}" data-day="weekend">
+              This weekend
+            </button>
+            <button type="button" class="btn btn-quick-day {% if selected_day == 'evening' %}btn-primary active{% else %}btn-outline-secondary{% endif %}" data-day="evening">
+              Evening only
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="row">
+    <!-- Left Sidebar Filters -->
+    <div class="col-lg-3 col-md-4 mb-3">
+      <div class="lv-card p-3">
+        <h6 class="fw-bold mb-3">Filters</h6>
+
+        <!-- Category Checkboxes -->
+        <div class="mb-3">
+          <label class="form-label small fw-bold text-muted mb-2">Category</label>
+          {% set all_cats = [('shop_helper', 'Shop helper'), ('packing', 'Packing'), ('data_entry', 'Data entry'), ('tutoring', 'Tutoring'), ('delivery', 'Delivery'), ('event_staff', 'Event staff')] %}
+          {% for cat_val, cat_label in all_cats %}
+            <div class="form-check mb-1">
+              <input class="form-check-input" type="checkbox" name="category" value="{{ cat_val }}" id="cat_{{ cat_val }}" form="job-filters-form" onchange="document.getElementById('job-filters-form').submit()" {% if cat_val in selected_categories %}checked{% endif %}>
+              <label class="form-check-label small" for="cat_{{ cat_val }}">{{ cat_label }}</label>
+            </div>
+          {% endfor %}
+        </div>
+
+        <hr class="my-2 text-muted">
+
+        <!-- Pay Type Checkboxes -->
+        <div class="mb-2">
+          <label class="form-label small fw-bold text-muted mb-2">Pay type</label>
+          <div class="form-check mb-1">
+            <input class="form-check-input" type="checkbox" name="pay_type" value="hour" id="pay_hour" form="job-filters-form" onchange="document.getElementById('job-filters-form').submit()" {% if 'hour' in selected_pay_types %}checked{% endif %}>
+            <label class="form-check-label small" for="pay_hour">Per hour</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="pay_type" value="day" id="pay_day" form="job-filters-form" onchange="document.getElementById('job-filters-form').submit()" {% if 'day' in selected_pay_types %}checked{% endif %}>
+            <label class="form-check-label small" for="pay_day">Per day</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Job List -->
+    <div class="col-lg-9 col-md-8">
+      <div class="d-flex justify-content-between align-items-center mb-2 small text-muted">
+        <span>
+          <strong>{{ total_count }} jobs</strong>
+          {% if selected_day %} {{ selected_day }} {% endif %}
+          within {{ selected_radius }} km · Urgent boosted jobs show first
+        </span>
+      </div>
+
+      {% if jobs %}
+        {% for job in jobs %}
+          {% include 'components/_job_card.html' %}
+        {% endfor %}
+      {% else %}
+        <div class="lv-card p-5 text-center">
+          <i class="bi bi-inbox text-muted fs-1 mb-3"></i>
+          <h5 class="fw-bold">No jobs matching your filters</h5>
+          <p class="text-muted small mb-3">Try widening your radius to 3 km or clearing some filters.</p>
+          <a href="{{ url_for('seeker.jobs') }}" class="btn btn-sm btn-lv-outline">Reset all filters</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/filters.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-3">
+  <!-- Back Link -->
+  <div class="mb-3">
+    <a href="{{ url_for('seeker.jobs') }}" class="text-decoration-none text-muted fw-semibold small">
+      <i class="bi bi-arrow-left me-1"></i> Back to jobs
+    </a>
+  </div>
+
+  <div class="row">
+    <!-- Left Job Detail Card -->
+    <div class="col-lg-7 mb-3">
+      <div class="lv-card p-4">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <h3 class="fw-bold mb-1 text-dark">{{ job.title }}</h3>
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="fw-semibold text-secondary fs-6">{{ job.shop.shop_name }}</span>
+              {% if job.shop and job.shop.is_verified %}
+                <span class="chip-verified"><i class="bi bi-patch-check-fill"></i> Verified</span>
+              {% endif %}
+              {% if job.shop and job.shop.rating_avg > 0 %}
+                <span class="text-muted small">★ {{ job.shop.rating_avg }} · {{ job.shop.rating_count }} ratings</span>
+              {% endif %}
+            </div>
+          </div>
+          <a href="{{ url_for('seeker.report_job', job_id=job.id) }}" class="text-danger small text-decoration-none fw-semibold">
+            <i class="bi bi-flag-fill me-1"></i> Report this job
+          </a>
+        </div>
+
+        <div class="my-3">
+          <span class="fs-2 fw-bold text-primary">₹{{ job.pay_amount }}</span>
+          <span class="text-muted">/{{ job.pay_type }}</span>
+        </div>
+
+        <div class="border-top border-bottom py-3 my-3">
+          <div class="row g-2 small">
+            <div class="col-sm-6">
+              <span class="text-muted d-block">TIMING</span>
+              <span class="fw-bold text-dark">
+                {% if job.day_option == 'today' %}Today{% elif job.day_option == 'tomorrow' %}Tomorrow{% else %}This weekend{% endif %}
+                · {{ job.time_range or 'Full day' }}
+              </span>
+            </div>
+            <div class="col-sm-6">
+              <span class="text-muted d-block">LOCATION & DISTANCE</span>
+              <span class="fw-bold text-dark">{{ job.shop.area.name if job.shop.area else 'Chennai' }} · {{ distance }} km</span>
+            </div>
+          </div>
+        </div>
+
+        {% if job.details %}
+          <div class="mb-4">
+            <label class="form-label small fw-bold text-muted">JOB DETAILS</label>
+            <p class="text-dark mb-0">{{ job.details }}</p>
+          </div>
+        {% endif %}
+
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          <a href="{{ directions_url }}" target="_blank" class="btn btn-lv-outline">
+            <i class="bi bi-compass me-1"></i> Directions ↗
+          </a>
+          {% if job.shop and job.shop.owner and job.shop.owner.phone %}
+            <a href="tel:{{ job.shop.owner.phone }}" class="btn btn-lv-outline">
+              <i class="bi bi-telephone-fill text-success me-1"></i> Call the shop
+            </a>
+          {% endif %}
+        </div>
+
+        <!-- Safety Banner Embedded -->
+        {% include 'components/_safety_banner.html' %}
+      </div>
+    </div>
+
+    <!-- Right Apply Card or Similar Jobs -->
+    <div class="col-lg-5">
+      {% if job.status == 'open' and not job.is_filled %}
+        <div class="lv-card p-4">
+          <h4 class="fw-bold mb-1">Apply to this job</h4>
+          <p class="text-muted small mb-3">Your name, area and free time are shared with the shop.</p>
+
+          {% if existing_app %}
+            <div class="alert alert-info py-2 small mb-3">
+              <i class="bi bi-info-circle me-1"></i> You applied on {{ existing_app.applied_at.strftime('%d %b, %H:%M') }}.
+            </div>
+            <a href="{{ url_for('seeker.applications') }}" class="btn btn-lv-outline w-100">Track in Applied</a>
+          {% else %}
+            <form method="POST" action="{{ url_for('seeker.job_detail', job_id=job.id) }}" class="prevent-double-submit">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Note (optional)</label>
+                <textarea name="note" class="form-control" rows="3" placeholder="e.g. I can come at 5 pm and have experience with stitching..."></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-lv-primary w-100 py-2 fs-6 fw-bold">
+                Send application
+              </button>
+            </form>
+          {% endif %}
+        </div>
+      {% else %}
+        <!-- Filled or Closed Job Notice -->
+        <div class="lv-card p-4 border-warning">
+          <div class="badge bg-secondary mb-2">This job is closed</div>
+          <h5 class="fw-bold mb-2">All positions filled</h5>
+          <p class="text-muted small mb-3">This micro-job has already hired the required helpers.</p>
+
+          {% if similar_jobs %}
+            <h6 class="fw-bold small text-uppercase text-muted mt-4 mb-2">Similar jobs near you</h6>
+            {% for sj in similar_jobs %}
+              <div class="border rounded p-2 mb-2 bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="fw-bold text-dark small">{{ sj.title }}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">{{ sj.shop.shop_name }} · ₹{{ sj.pay_amount }}/{{ sj.pay_type }}</div>
+                  </div>
+                  <a href="{{ url_for('seeker.job_detail', job_id=sj.id) }}" class="btn btn-sm btn-primary py-0 px-2" style="font-size: 0.8rem;">View</a>
+                </div>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
