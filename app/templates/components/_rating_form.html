@@ -1,0 +1,59 @@
+<div class="lv-card p-4 mx-auto" style="max-width: 540px;">
+  <h4 class="fw-bold text-center mb-1">{{ rating_title or 'Job done!' }}</h4>
+  <p class="text-muted text-center mb-3">{{ rating_subtitle or 'How was the experience?' }}</p>
+
+  <form method="POST" action="{{ submit_url }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="stars" id="rating-stars-input" value="5">
+
+    <!-- 5 Star Selection -->
+    <div class="text-center mb-4">
+      <div class="star-rating justify-content-center">
+        <span class="star active" data-value="1">★</span>
+        <span class="star active" data-value="2">★</span>
+        <span class="star active" data-value="3">★</span>
+        <span class="star active" data-value="4">★</span>
+        <span class="star active" data-value="5">★</span>
+      </div>
+    </div>
+
+    <!-- Positive Tags -->
+    <div class="mb-3">
+      <label class="form-label fw-bold small text-muted">WHAT WENT WELL</label>
+      <div class="tag-btn-group">
+        {% for tag in positive_tags %}
+          <label class="tag-btn">
+            <input type="checkbox" name="positive_tags" value="{{ tag }}" class="d-none">
+            {{ tag }}
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Red Tags -->
+    <div class="mb-3">
+      <label class="form-label fw-bold small text-muted">SOMETHING WRONG? (OPTIONAL)</label>
+      <div class="tag-btn-group">
+        {% for tag in red_tags %}
+          <label class="tag-btn tag-btn-red">
+            <input type="checkbox" name="red_tags" value="{{ tag }}" class="d-none">
+            {{ tag }}
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Comment -->
+    <div class="mb-4">
+      <label class="form-label fw-semibold small">Comment (optional)</label>
+      <textarea name="comment" rows="2" class="form-control" placeholder="Say a few words..."></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-lv-primary w-100 py-2 fw-bold">Submit rating</button>
+
+    <div class="text-center mt-3 text-muted small">
+      Ratings show after both sides rate · Picking a red tag also offers
+      <a href="{{ url_for('support.support') }}" class="text-danger fw-semibold">Report a problem</a>
+    </div>
+  </form>
+</div>
