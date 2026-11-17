@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-3">
+  <!-- Draft Resume Alert Banner -->
+  {% if draft_data and draft_data.get('title') %}
+    <div class="alert alert-info d-flex justify-content-between align-items-center py-2 px-3 mb-3 shadow-sm">
+      <div>
+        <i class="bi bi-pencil-square me-1"></i> You have an unfinished draft: <strong>{{ draft_data.get('title') }}</strong>.
+      </div>
+      <a href="{{ url_for('employer.post_job') }}" class="btn btn-sm btn-primary">Resume draft</a>
+    </div>
+  {% endif %}
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h3 class="fw-bold mb-0 text-dark">Hello, {{ shop.owner_name }}</h3>
+      <span class="text-muted small">Your posts</span>
+    </div>
+    <a href="{{ url_for('employer.post_job') }}" class="btn btn-lv-primary">
+      <i class="bi bi-plus-lg me-1"></i> Post a job
+    </a>
+  </div>
+
+  {% if jobs %}
+    <div class="row">
+      <div class="col-12">
+        {% for job in jobs %}
+          <div class="lv-card p-3 mb-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-center">
+              <div class="mb-2 mb-md-0">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                  <h5 class="fw-bold mb-0 text-dark">{{ job.title }}</h5>
+                  <span class="chip-status chip-status-{{ job.status }} text-capitalize">
+                    {{ job.status.replace('_', ' ') }}
+                  </span>
+                  {% if job.is_currently_boosted %}
+                    <span class="chip-urgent"><i class="bi bi-lightning-charge-fill"></i> Urgent</span>
+                  {% endif %}
+                </div>
+                <div class="text-muted small">
+                  {% if job.day_option == 'today' %}Today{% elif job.day_option == 'tomorrow' %}Tomorrow{% else %}Weekend{% endif %}
+                  · <span class="fw-semibold text-dark">{{ job.applications|length }} applicants</span>
+                  · <span class="fw-semibold text-primary">{{ job.hired_count }} of {{ job.people_needed }} hired</span>
+                  · ₹{{ job.pay_amount }}/{{ job.pay_type }}
+                </div>
+              </div>
+
+              <div class="d-flex gap-2 align-items-center">
+                {% if job.status == 'open' or job.status == 'pending_review' %}
+                  <a href="{{ url_for('employer.job_detail', job_id=job.id) }}" class="btn btn-sm btn-lv-primary px-3">
+                    View applicants
+                  </a>
+                {% else %}
+                  <a href="{{ url_for('employer.post_job', copy_from=job.id) }}" class="btn btn-sm btn-lv-outline px-3">
+                    Post again
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div class="lv-card p-5 text-center">
+      <i class="bi bi-megaphone text-muted fs-1 mb-2"></i>
+      <h5 class="fw-bold">No jobs posted yet</h5>
+      <p class="text-muted small mb-3">Post a micro-job in 30 seconds to find nearby helpers today.</p>
+      <a href="{{ url_for('employer.post_job') }}" class="btn btn-lv-primary">Post your first job</a>
+    </div>
+  {% endif %}
+
+  <div class="text-muted small mt-3">
+    <i class="bi bi-info-circle me-1"></i> Post again copies the last job, so a repeat post takes 5 seconds. An unfinished post is saved as a draft and offered when you return.
+  </div>
+</div>
+{% endblock %}
