@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-3">
+  <h3 class="fw-bold mb-3">My applications</h3>
+
+  <!-- Filter Tabs -->
+  <div class="mb-3">
+    <ul class="nav nav-pills gap-1">
+      <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'all' %}active{% endif %}" href="{{ url_for('seeker.applications', tab='all') }}">All</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'applied' %}active{% endif %}" href="{{ url_for('seeker.applications', tab='applied') }}">Applied</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'shortlisted' %}active{% endif %}" href="{{ url_for('seeker.applications', tab='shortlisted') }}">Shortlisted</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'hired' %}active{% endif %}" href="{{ url_for('seeker.applications', tab='hired') }}">Hired</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'completed' %}active{% endif %}" href="{{ url_for('seeker.applications', tab='completed') }}">Completed</a>
+      </li>
+    </ul>
+  </div>
+
+  {% if applications %}
+    <div class="row">
+      <div class="col-12">
+        {% for app in applications %}
+          <div class="lv-card p-3 mb-2">
+            <div class="d-flex flex-wrap justify-content-between align-items-center">
+              <div class="mb-2 mb-md-0">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                  <h5 class="fw-bold mb-0 text-dark">{{ app.job.title }}</h5>
+                  <span class="chip-status chip-status-{{ app.status }} text-capitalize">
+                    {{ app.status }}
+                  </span>
+                </div>
+                <div class="text-muted small">
+                  {{ app.job.shop.shop_name }} ·
+                  {% if app.job.day_option == 'today' %}Today{% elif app.job.day_option == 'tomorrow' %}Tomorrow{% else %}Weekend{% endif %}
+                  {% if app.job.time_range %}· {{ app.job.time_range }}{% endif %} ·
+                  <span class="fw-semibold text-primary">₹{{ app.job.pay_amount }}/{{ app.job.pay_type }}</span>
+                </div>
+              </div>
+
+              <!-- Actions according to application status -->
+              <div class="d-flex gap-2 align-items-center">
+                {% if app.status == 'applied' %}
+                  <form method="POST" action="{{ url_for('seeker.withdraw_application', app_id=app.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-sm btn-link text-danger text-decoration-none">Withdraw</button>
+                  </form>
+                {% elif app.status == 'shortlisted' %}
+                  {% if app.job.shop.owner and app.job.shop.owner.phone %}
+                    <a href="tel:{{ app.job.shop.owner.phone }}" class="btn btn-sm btn-lv-outline">
+                      <i class="bi bi-telephone-fill text-success me-1"></i> Call
+                    </a>
+                  {% endif %}
+                {% elif app.status == 'hired' %}
+                  {% if app.job.shop.owner and app.job.shop.owner.phone %}
+                    <a href="tel:{{ app.job.shop.owner.phone }}" class="btn btn-sm btn-lv-outline">
+                      <i class="bi bi-telephone-fill text-success me-1"></i> Call
+                    </a>
+                  {% endif %}
+                  <a href="{{ app.directions_url }}" target="_blank" class="btn btn-sm btn-lv-primary">
+                    Directions ↗
+                  </a>
+                {% elif app.status == 'completed' %}
+                  {% if app.is_rated %}
+                    <span class="badge bg-light text-muted border px-3 py-2">✓ Rated</span>
+                  {% else %}
+                    <a href="{{ url_for('seeker.rate', app_id=app.id) }}" class="btn btn-sm btn-lv-primary">
+                      Rate shop
+                    </a>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div class="lv-card p-5 text-center">
+      <i class="bi bi-journal-x text-muted fs-1 mb-2"></i>
+      <h5 class="fw-bold">No applications here</h5>
+      <p class="text-muted small">Open jobs near you and tap Apply to get started.</p>
+      <a href="{{ url_for('seeker.jobs') }}" class="btn btn-sm btn-lv-primary">Browse jobs</a>
+    </div>
+  {% endif %}
+
+  <div class="text-muted small mt-3">
+    <i class="bi bi-info-circle me-1"></i> When a shop marks a job complete, its row turns to <strong>Completed</strong> with a <strong>Rate shop</strong> button.
+  </div>
+</div>
+{% endblock %}
