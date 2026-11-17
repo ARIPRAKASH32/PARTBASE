@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Top Safety Banner -->
+  {% include 'components/_safety_banner.html' %}
+
+  <!-- Hero Section -->
+  <div class="row align-items-center my-4 py-2">
+    <div class="col-lg-6 mb-4 mb-lg-0">
+      <div class="mb-3">
+        <span class="chip-pilot"><i class="bi bi-geo-alt-fill me-1"></i> Pilot: OMR / Anna Nagar</span>
+      </div>
+      <h1 class="hero-title mb-3">Jobs near you.<br>Today.</h1>
+      <p class="hero-subtitle mb-4">
+        A tailor who needs two helpers this weekend posts in 30 seconds. Students and homemakers within 3 km tap Apply or Call and start the same day.
+      </p>
+
+      <div class="d-flex flex-wrap gap-3">
+        <a href="{{ url_for('auth.select_role', role='seeker') }}" class="btn btn-lv-success btn-lg px-4 shadow-sm">
+          <i class="bi bi-search me-1"></i> I want a job
+        </a>
+        <a href="{{ url_for('auth.select_role', role='employer') }}" class="btn btn-lv-primary btn-lg px-4 shadow-sm">
+          <i class="bi bi-plus-circle me-1"></i> I want to hire
+        </a>
+      </div>
+    </div>
+
+    <!-- Sample Job Cards (Preview) -->
+    <div class="col-lg-6">
+      <div class="p-3 bg-white rounded-3 shadow-sm border">
+        <h6 class="text-muted fw-bold text-uppercase small mb-3">Live Micro-Jobs Near You</h6>
+
+        <!-- Sample 1 -->
+        <div class="lv-card p-3 mb-3 border">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="fw-bold text-dark fs-5">Shop helper</span>
+                <span class="chip-verified"><i class="bi bi-patch-check-fill"></i> Verified</span>
+              </div>
+              <div class="text-muted small">Sri Murugan Tailors · Today, 5–9 pm · 1.2 km</div>
+            </div>
+            <div class="text-end">
+              <span class="fs-5 fw-bold text-primary">₹120/hr</span>
+              <div class="mt-1">
+                <a href="{{ url_for('auth.select_role', role='seeker') }}" class="btn btn-sm btn-outline-secondary py-0 px-2 me-1">Call</a>
+                <a href="{{ url_for('auth.select_role', role='seeker') }}" class="btn btn-sm btn-primary py-0 px-2">Apply</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sample 2 -->
+        <div class="lv-card p-3 mb-0 border">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="fw-bold text-dark fs-5">Packing helper</span>
+                <span class="chip-urgent"><i class="bi bi-lightning-charge-fill"></i> Urgent</span>
+              </div>
+              <div class="text-muted small">Anand Stores · Today · 0.8 km</div>
+            </div>
+            <div class="text-end">
+              <span class="fs-5 fw-bold text-primary">₹600/day</span>
+              <div class="mt-1">
+                <a href="{{ url_for('auth.select_role', role='seeker') }}" class="btn btn-sm btn-outline-secondary py-0 px-2 me-1">Call</a>
+                <a href="{{ url_for('auth.select_role', role='seeker') }}" class="btn btn-sm btn-primary py-0 px-2">Apply</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 Core Feature Cards -->
+  <div class="row g-3 my-4" id="safety">
+    <div class="col-md-4">
+      <div class="lv-card h-100 p-4">
+        <div class="text-primary fs-2 mb-2"><i class="bi bi-stopwatch"></i></div>
+        <h5 class="fw-bold">Fast posting</h5>
+        <p class="text-muted mb-0">Post a micro-job in 30 seconds or less in 3 simple steps without lengthy forms.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="lv-card h-100 p-4">
+        <div class="text-primary fs-2 mb-2"><i class="bi bi-geo-alt"></i></div>
+        <h5 class="fw-bold">Truly local</h5>
+        <p class="text-muted mb-0">Seekers see verified openings within 2–3 km of their locality. Zero commute hassles.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="lv-card h-100 p-4">
+        <div class="text-primary fs-2 mb-2"><i class="bi bi-shield-check"></i></div>
+        <h5 class="fw-bold">Safe by default</h5>
+        <p class="text-muted mb-0">No job can ask for a registration fee or deposit. Real-time scam filters block bad actors live.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- How it Works (3 Steps) -->
+  <div class="lv-card p-4 my-4" id="how-it-works">
+    <h4 class="fw-bold mb-4 text-center">How LocalVelai Works</h4>
+    <div class="row text-center g-4">
+      <div class="col-md-4">
+        <div class="badge bg-primary rounded-circle p-3 fs-5 mb-2">1</div>
+        <h5 class="fw-bold">Sign in</h5>
+        <p class="text-muted">Mobile number and 6-digit OTP. No passwords, no email required.</p>
+      </div>
+      <div class="col-md-4">
+        <div class="badge bg-primary rounded-circle p-3 fs-5 mb-2">2</div>
+        <h5 class="fw-bold">Find or post</h5>
+        <p class="text-muted">Filter micro-jobs by Today, This weekend, or Evening only within 3 km.</p>
+      </div>
+      <div class="col-md-4">
+        <div class="badge bg-primary rounded-circle p-3 fs-5 mb-2">3</div>
+        <h5 class="fw-bold">Hire and rate</h5>
+        <p class="text-muted">Call, apply, hire, then double-blind ratings reveal when both have completed.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
