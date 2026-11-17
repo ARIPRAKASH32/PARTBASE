@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-3">
+  <!-- Back Link -->
+  <div class="mb-3">
+    <a href="{{ url_for('employer.posts') }}" class="text-decoration-none text-muted fw-semibold small">
+      <i class="bi bi-arrow-left me-1"></i> My posts
+    </a>
+  </div>
+
+  <!-- Job Header Title & Status -->
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+      <h3 class="fw-bold mb-1 text-dark">{{ job.title }}</h3>
+      <div class="text-muted small">
+        {% if job.day_option == 'today' %}Today{% elif job.day_option == 'tomorrow' %}Tomorrow{% else %}Weekend{% endif %}
+        {% if job.time_range %}· {{ job.time_range }}{% endif %} ·
+        <span class="fw-semibold text-primary">₹{{ job.pay_amount }}/{{ job.pay_type }}</span> ·
+        {{ shop.address }}
+      </div>
+    </div>
+    <div>
+      <span class="chip-status chip-status-{{ job.status }} text-capitalize fs-6">
+        {{ job.status.replace('_', ' ') }}
+      </span>
+      {% if job.is_currently_boosted %}
+        <span class="chip-urgent ms-1"><i class="bi bi-lightning-charge-fill"></i> Urgent</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- 3 Stats Counters -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="lv-card p-3 text-center">
+        <h2 class="fw-bold text-dark mb-0">{{ applicants|length }}</h2>
+        <span class="text-muted small fw-semibold">Applicants</span>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="lv-card p-3 text-center">
+        <h2 class="fw-bold text-primary mb-0">{{ job.hired_count }} of {{ job.people_needed }}</h2>
+        <span class="text-muted small fw-semibold">Hired</span>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="lv-card p-3 text-center">
+        <h2 class="fw-bold text-secondary mb-0">{{ job.view_count or 48 }}</h2>
+        <span class="text-muted small fw-semibold">People seen this job</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Left Applicants Table -->
+    <div class="col-lg-8 mb-4">
+      <div class="lv-card p-3">
+        <h5 class="fw-bold mb-3">Applicants</h5>
+
+        {% if applicants %}
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead class="table-light small text-muted">
+                <tr>
+                  <th>Name</th>
+                  <th>Distance</th>
+                  <th>Free</th>
+                  <th>Status</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for app in applicants %}
+                  <tr>
+                    <td>
+                      <div class="fw-bold text-dark">{{ app.seeker.name or 'Seeker' }}</div>
+                      <div class="text-muted small">★ {{ app.seeker_rating or 4.8 }}</div>
+                    </td>
+                    <td class="small">{{ app.distance_km or 1.2 }} km</td>
+                    <td class="small text-muted">{{ app.seeker.free_slots or 'Anytime' }}</td>
+                    <td>
+                      <span class="chip-status chip-status-{{ app.status }} text-capitalize small">
+                        {{ app.status }}
+                      </span>
+                    </td>
+                    <td class="text-end">
+                      <div class="btn-group btn-group-sm">
+                        {% if app.seeker.phone %}
+                          <a href="tel:{{ app.seeker.phone }}" class="btn btn-outline-secondary">Call</a>
+                        {% endif %}
+                        <a href="{{ url_for('employer.applicant_profile', app_id=app.id) }}" class="btn btn-primary">
+                          {% if app.status == 'applied' %}View / Shortlist{% else %}View{% endif %}
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-people fs-2 mb-2"></i>
+            <p class="small mb-0">No applicants yet. Nearby seekers will be notified.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Right Side Actions & Boost -->
+    <div class="col-lg-4">
+      <!-- Boost Card -->
+      <div class="lv-card p-4 mb-3 border-warning" style="background-color: #FFFDF5;">
+        <h6 class="fw-bold text-dark mb-1">Need people faster?</h6>
+        <p class="text-muted small mb-3">Boost for ₹49: first in the list for 24 hours with an Urgent tag.</p>
+        {% if job.is_currently_boosted %}
+          <div class="alert alert-success py-2 px-3 small mb-0 text-center">
+            <i class="bi bi-check-circle-fill me-1"></i> Urgent boost active!
+          </div>
+        {% else %}
+          <a href="{{ url_for('employer.boost_job', job_id=job.id) }}" class="btn btn-lv-primary w-100 fw-bold">
+            Boost for ₹49
+          </a>
+        {% endif %}
+      </div>
+
+      <!-- Mark Job Complete Card -->
+      <div class="lv-card p-4">
+        <h6 class="fw-bold text-dark mb-1">{{ job.people_needed - job.hired_count }} more needed</h6>
+        <p class="text-muted small mb-3">Shortlist or hire from the list.</p>
+        <form method="POST" action="{{ url_for('employer.complete_job', job_id=job.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-lv-success w-100 fw-bold">
+            Mark job complete
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

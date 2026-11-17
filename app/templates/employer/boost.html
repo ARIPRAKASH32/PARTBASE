@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-5 col-md-7">
+      <div class="lv-card p-4 p-md-5">
+        <h3 class="fw-bold mb-3">Boost this job</h3>
+
+        <!-- Urgent Boost Info Card -->
+        <div class="alert alert-warning py-3 px-3 mb-4 border-0" style="background-color: #FFF3CD; color: #664D03;">
+          <div class="fw-bold fs-5 mb-1"><i class="bi bi-lightning-charge-fill text-warning me-1"></i> Urgent boost ₹49</div>
+          <div class="small">
+            {{ job.title }} · Today. First in the list for 24 hours with an Urgent tag.
+          </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('employer.boost_job', job_id=job.id) }}" class="prevent-double-submit">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+          <!-- Payment Method Toggle -->
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted">PAY WITH</label>
+            <div class="btn-group w-100" role="group">
+              <input type="radio" class="btn-check" name="method" id="pay_upi" value="upi" checked>
+              <label class="btn btn-outline-primary" for="pay_upi">UPI</label>
+
+              <input type="radio" class="btn-check" name="method" id="pay_card" value="card">
+              <label class="btn btn-outline-primary" for="pay_card">Card</label>
+            </div>
+          </div>
+
+          <!-- UPI ID Input -->
+          <div class="mb-4">
+            <label class="form-label small fw-semibold">UPI ID</label>
+            <input type="text" name="upi_id" class="form-control form-control-lg fs-6" placeholder="name@bank" value="shopowner@okhdfcbank" required>
+          </div>
+
+          <button type="submit" class="btn btn-lv-primary w-100 py-2 fs-6 fw-bold mb-3">
+            Pay ₹49
+          </button>
+
+          <p class="text-muted text-center small mb-0">
+            Failed payment? Nothing is charged twice. Report it in <a href="{{ url_for('support.support') }}">Support</a>.
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
