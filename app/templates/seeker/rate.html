@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      {% set rating_title = "Job done!" %}
+      {% set rating_subtitle = "How was " ~ shop.shop_name ~ "?" %}
+      {% set submit_url = url_for('seeker.rate', app_id=application.id) %}
+      {% set positive_tags = ['Paid on time', 'Safe place', 'Polite'] %}
+      {% set red_tags = ['Asked for money', 'Unsafe place', 'Paid less'] %}
+      {% include 'components/_rating_form.html' %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/filters.js') }}"></script>
+{% endblock %}
