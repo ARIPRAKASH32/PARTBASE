@@ -1,0 +1,388 @@
+/* LocalVelai Brand Design System */
+:root {
+  --lv-navy: #1B3A6B;
+  --lv-navy-dark: #12284b;
+  --lv-teal: #1A9A8F;
+  --lv-teal-dark: #13776f;
+  --lv-bg: #EAF4FA;
+  --lv-card-bg: #FFFFFF;
+  --lv-border: #DDE8F0;
+  --lv-text-main: #1D2D44;
+  --lv-text-muted: #64748B;
+  --lv-urgent: #FD7E14;
+  --lv-urgent-bg: #FFEAD8;
+  --lv-verified: #198754;
+  --lv-verified-bg: #D1E7DD;
+  --lv-radius: 12px;
+  --lv-shadow: 0 4px 14px rgba(27, 58, 107, 0.07);
+}
+
+body {
+  background-color: var(--lv-bg);
+  color: var(--lv-text-main);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+/* Navbar */
+.lv-navbar {
+  background-color: var(--lv-navy);
+  padding: 0.75rem 1rem;
+}
+
+.lv-logo {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #FFFFFF !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.lv-logo-badge {
+  background-color: #2D5899;
+  color: #FFFFFF;
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.lv-nav-link {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-weight: 500;
+  padding: 0.5rem 0.85rem !important;
+  border-radius: 6px;
+  transition: all 0.15s ease-in-out;
+}
+
+.lv-nav-link:hover, .lv-nav-link.active {
+  color: #FFFFFF !important;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Safety Banner */
+.lv-safety-banner {
+  background-color: #FFF3CD;
+  border: 1px solid #FFE69C;
+  color: #664D03;
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: var(--lv-radius);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Cards */
+.lv-card {
+  background: var(--lv-card-bg);
+  border-radius: var(--lv-radius);
+  border: 1px solid var(--lv-border);
+  box-shadow: var(--lv-shadow);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lv-card:hover {
+  box-shadow: 0 6px 18px rgba(27, 58, 107, 0.11);
+}
+
+/* Badges / Chips */
+.chip-verified {
+  background-color: var(--lv-verified-bg);
+  color: var(--lv-verified);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.chip-urgent {
+  background-color: var(--lv-urgent-bg);
+  color: #C05600;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.chip-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 50px;
+}
+
+.chip-status-open {
+  background-color: #E0F2FE;
+  color: #0369A1;
+}
+
+.chip-status-closed {
+  background-color: #F1F5F9;
+  color: #64748B;
+}
+
+.chip-status-hired {
+  background-color: #DCFCE7;
+  color: #15803D;
+}
+
+.chip-status-shortlisted {
+  background-color: #FEF9C3;
+  color: #854D0E;
+}
+
+.chip-status-hidden {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
+
+.chip-pilot {
+  background-color: #FEF3C7;
+  color: #92400E;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  display: inline-block;
+}
+
+/* Buttons (min 44px tap targets) */
+.btn-lv-primary {
+  background-color: #2563EB;
+  border-color: #2563EB;
+  color: #FFFFFF;
+  font-weight: 600;
+  min-height: 44px;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-lv-primary:hover {
+  background-color: #1D4ED8;
+  border-color: #1D4ED8;
+  color: #FFFFFF;
+}
+
+.btn-lv-teal {
+  background-color: var(--lv-teal);
+  border-color: var(--lv-teal);
+  color: #FFFFFF;
+  font-weight: 600;
+  min-height: 44px;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+}
+
+.btn-lv-teal:hover {
+  background-color: var(--lv-teal-dark);
+  border-color: var(--lv-teal-dark);
+  color: #FFFFFF;
+}
+
+.btn-lv-success {
+  background-color: #16A34A;
+  border-color: #16A34A;
+  color: #FFFFFF;
+  font-weight: 600;
+  min-height: 44px;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+}
+
+.btn-lv-success:hover {
+  background-color: #15803D;
+  border-color: #15803D;
+  color: #FFFFFF;
+}
+
+.btn-lv-outline {
+  background-color: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  color: var(--lv-text-main);
+  font-weight: 600;
+  min-height: 44px;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+}
+
+.btn-lv-outline:hover {
+  background-color: #F8FAFC;
+  border-color: #94A3B8;
+  color: var(--lv-navy);
+}
+
+.btn-lv-danger {
+  background-color: #DC2626;
+  border-color: #DC2626;
+  color: #FFFFFF;
+  font-weight: 600;
+  min-height: 44px;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+}
+
+.btn-lv-danger:hover {
+  background-color: #B91C1C;
+  border-color: #B91C1C;
+  color: #FFFFFF;
+}
+
+/* OTP 6-box input */
+.otp-container {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.otp-box {
+  width: 48px;
+  height: 56px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 2px solid #CBD5E1;
+  background-color: #FFFFFF;
+  color: var(--lv-navy);
+  transition: border-color 0.15s ease-in-out;
+}
+
+.otp-box:focus {
+  outline: none;
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* Hero Section */
+.hero-title {
+  font-size: 2.75rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--lv-navy);
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: var(--lv-text-muted);
+  line-height: 1.5;
+}
+
+/* Star Rating */
+.star-rating {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #CBD5E1;
+}
+
+.star-rating .star.active {
+  color: #F59E0B;
+}
+
+/* Tag Selectors */
+.tag-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag-btn {
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  border-radius: 50px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.tag-btn.active {
+  background: #2563EB;
+  border-color: #2563EB;
+  color: #FFFFFF;
+}
+
+.tag-btn-red.active {
+  background: #DC2626;
+  border-color: #DC2626;
+  color: #FFFFFF;
+}
+
+/* Live Preview Card */
+.preview-card {
+  border: 2px dashed #93C5FD;
+  background: #F8FAFC;
+  border-radius: var(--lv-radius);
+  padding: 1rem;
+}
+
+/* Footer */
+.lv-footer {
+  background-color: #FFFFFF;
+  border-top: 1px solid var(--lv-border);
+  padding: 1.25rem 0;
+  font-size: 0.875rem;
+  color: var(--lv-text-muted);
+}
+
+.lv-footer a {
+  color: var(--lv-text-muted);
+  text-decoration: none;
+}
+
+.lv-footer a:hover {
+  color: var(--lv-navy);
+  text-decoration: underline;
+}
+
+/* Admin Sidebar */
+.admin-sidebar {
+  background: #101E33;
+  color: #FFFFFF;
+  min-height: 100vh;
+  padding: 1.5rem 1rem;
+}
+
+.admin-sidebar a {
+  color: #94A3B8;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.admin-sidebar a:hover, .admin-sidebar a.active {
+  background: #2563EB;
+  color: #FFFFFF;
+}
