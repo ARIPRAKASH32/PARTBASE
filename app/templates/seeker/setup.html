@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row min-vh-75 align-items-center justify-content-center">
+    <div class="col-lg-5 mb-4 mb-lg-0 text-center text-lg-start">
+      <h1 class="hero-title mb-3">Jobs near you.<br>Today.</h1>
+      <p class="hero-subtitle mb-4">Hyper-local micro-jobs for Chennai</p>
+      {% include 'components/_safety_banner.html' %}
+    </div>
+
+    <div class="col-lg-6">
+      <div class="lv-card p-4 p-md-5">
+        <h3 class="fw-bold mb-1">Set up your profile</h3>
+        <p class="text-muted small mb-4">Shared with shops you apply to.</p>
+
+        <form method="POST" action="{{ url_for('seeker.setup') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+          <!-- Name -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Name</label>
+            <input type="text" name="name" value="{{ user.name or '' }}" class="form-control form-control-lg fs-6" placeholder="e.g. Priya K" required>
+          </div>
+
+          <!-- Area -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Area</label>
+            <select name="area_id" class="form-select form-select-lg fs-6" required>
+              <option value="" disabled {% if not user.area_id %}selected{% endif %}>Select your area</option>
+              {% for area in areas %}
+                <option value="{{ area.id }}" {% if user.area_id == area.id %}selected{% endif %}>
+                  {{ area.name }}, Chennai ({{ area.pincode }})
+                </option>
+              {% endfor %}
+            </select>
+            <div class="form-text small mt-1">
+              <button type="button" class="btn btn-link p-0 text-decoration-none small" id="btn-use-location">
+                <i class="bi bi-crosshair me-1"></i> Use my location
+              </button>
+              · If location is denied, pick an area or pincode. We never block on GPS.
+            </div>
+          </div>
+
+          <!-- When are you free? -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold">When are you free?</label>
+            <div class="tag-btn-group">
+              <label class="tag-btn {% if 'weekday_evening' in (user.free_slots or '') %}active{% endif %}">
+                <input type="checkbox" name="free_slots" value="weekday_evening" class="d-none" {% if 'weekday_evening' in (user.free_slots or '') %}checked{% endif %}>
+                Weekday evening
+              </label>
+              <label class="tag-btn {% if 'weekend' in (user.free_slots or '') %}active{% endif %}">
+                <input type="checkbox" name="free_slots" value="weekend" class="d-none" {% if 'weekend' in (user.free_slots or '') %}checked{% endif %}>
+                Weekend
+              </label>
+              <label class="tag-btn {% if 'anytime' in (user.free_slots or '') or not user.free_slots %}active{% endif %}">
+                <input type="checkbox" name="free_slots" value="anytime" class="d-none" {% if 'anytime' in (user.free_slots or '') or not user.free_slots %}checked{% endif %}>
+                Anytime
+              </label>
+            </div>
+          </div>
+
+          <!-- Interested in -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Interested in</label>
+            <div class="tag-btn-group">
+              {% set categories = [('shop_helper', 'Shop helper'), ('packing', 'Packing'), ('data_entry', 'Data entry'), ('tutoring', 'Tutoring'), ('delivery', 'Delivery'), ('event_staff', 'Event staff')] %}
+              {% set my_interests = (user.seeker_profile.interests or '') if user.seeker_profile else '' %}
+              {% for cat_val, cat_label in categories %}
+                <label class="tag-btn {% if cat_val in my_interests %}active{% endif %}">
+                  <input type="checkbox" name="interests" value="{{ cat_val }}" class="d-none" {% if cat_val in my_interests %}checked{% endif %}>
+                  {{ cat_label }}
+                </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-lv-primary w-100 py-2 fs-6 fw-bold">
+            Show jobs near me
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/filters.js') }}"></script>
+{% endblock %}
