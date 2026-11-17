@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review Reported Job — LocalVelai Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Admin Sidebar -->
+      <div class="col-md-3 col-lg-2 admin-sidebar">
+        <div class="d-flex align-items-center gap-2 mb-4 px-2">
+          <span class="lv-logo-badge bg-primary">LV</span>
+          <span class="fs-5 fw-bold text-white">Admin</span>
+        </div>
+        <nav class="nav flex-column">
+          <a class="active" href="{{ url_for('admin.reports') }}"><i class="bi bi-shield-exclamation"></i> Reports</a>
+          <a href="{{ url_for('admin.employers') }}"><i class="bi bi-shop"></i> Employers</a>
+          <a href="{{ url_for('admin.support') }}"><i class="bi bi-headset"></i> Support</a>
+          <hr class="text-secondary">
+          <a href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Sign out</a>
+        </nav>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-md-9 col-lg-10 p-4">
+        <div class="mb-3">
+          <a href="{{ url_for('admin.reports') }}" class="text-decoration-none text-muted small fw-semibold">
+            ← Report queue
+          </a>
+        </div>
+
+        <h3 class="fw-bold mb-3">Review reported job</h3>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category if category != 'error' else 'danger' }} small py-2">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="row">
+          <!-- Left Column: Job & Reports Info -->
+          <div class="col-lg-6 mb-4">
+            <div class="lv-card p-4 mb-3">
+              <div class="d-flex gap-2 mb-2">
+                {% if job.status == 'hidden' or job.report_count >= 3 %}
+                  <span class="badge bg-danger">Hidden after 3 reports</span>
+                {% endif %}
+                {% if job.shop and not job.shop.is_verified %}
+                  <span class="badge bg-warning text-dark">Unverified employer</span>
+                {% endif %}
+              </div>
+
+              <h4 class="fw-bold text-dark mb-1">{{ job.title }}</h4>
+              <p class="text-muted small mb-3">Posted by {{ job.shop.owner.phone if job.shop and job.shop.owner else 'Unknown' }}</p>
+
+              <div class="p-3 bg-light rounded border mb-3">
+                <p class="text-dark mb-0">{{ job.details or 'No details provided.' }}</p>
+              </div>
+
+              <!-- AI Scam Check Box -->
+              <div class="border border-danger rounded p-3 mb-3" style="background-color: #FEF2F2;">
+                <div class="fw-bold text-danger mb-1">
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i> AI scam check: red flag
+                </div>
+                <div class="small text-danger">
+                  Text asks for a fee or advance. The safety rule says no job can ask for money.
+                </div>
+              </div>
+
+              <!-- Reports List -->
+              <h6 class="fw-bold text-muted small text-uppercase mb-2">Reports ({{ reports|length }})</h6>
+              {% for r in reports %}
+                <div class="border-bottom py-2 small">
+                  <div class="d-flex justify-content-between">
+                    <span class="fw-semibold text-dark">Seeker · {{ r.reason.replace('_', ' ').capitalize() }}</span>
+                    <span class="text-muted">{{ r.created_at.strftime('%H:%M') }}</span>
+                  </div>
+                  {% if r.details %}
+                    <div class="text-muted">{{ r.details }}</div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Right Column: Verification & Action Form -->
+          <div class="col-lg-6">
+            <div class="lv-card p-4">
+              <form method="POST" action="{{ url_for('admin.review_job', job_id=job.id) }}" id="review-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <!-- 1. Verify (All required) -->
+                <div class="mb-3">
+                  <h6 class="fw-bold text-dark mb-2">1 · Verify (all required)</h6>
+                  <div class="form-check mb-1">
+                    <input class="form-check-input verify-chk" type="checkbox" name="check_money" id="chk_money" required>
+                    <label class="form-check-label small" for="chk_money">Job text asks for money</label>
+                  </div>
+                  <div class="form-check mb-1">
+                    <input class="form-check-input verify-chk" type="checkbox" name="check_shop" id="chk_shop" required>
+                    <label class="form-check-label small" for="chk_shop">Shop name, phone and address checked</label>
+                  </div>
+                  <div class="form-check mb-1">
+                    <input class="form-check-input verify-chk" type="checkbox" name="check_reasons" id="chk_reasons" required>
+                    <label class="form-check-label small" for="chk_reasons">Reporters' reasons match the job</label>
+                  </div>
+                </div>
+
+                <!-- 2. Verdict -->
+                <div class="mb-3">
+                  <h6 class="fw-bold text-dark mb-2">2 · Verdict</h6>
+                  <div class="form-check mb-1">
+                    <input class="form-check-input" type="radio" name="verdict" id="v1" value="confirmed_scam" checked>
+                    <label class="form-check-label small fw-semibold" for="v1">Confirmed scam</label>
+                  </div>
+                  <div class="form-check mb-1">
+                    <input class="form-check-input" type="radio" name="verdict" id="v2" value="looks_genuine">
+                    <label class="form-check-label small" for="v2">Looks genuine</label>
+                  </div>
+                  <div class="form-check mb-1">
+                    <input class="form-check-input" type="radio" name="verdict" id="v3" value="need_more_info">
+                    <label class="form-check-label small" for="v3">Need more info</label>
+                  </div>
+                </div>
+
+                <!-- 3. Follow-up -->
+                <div class="mb-3">
+                  <h6 class="fw-bold text-dark mb-2">3 · Follow-up</h6>
+                  <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" name="block_employer" id="f_block" checked>
+                    <label class="form-check-label small" for="f_block">Block this employer</label>
+                  </div>
+                  <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" name="notify_reporters" id="f_notify" checked>
+                    <label class="form-check-label small" for="f_notify">Tell the reporters the job was removed</label>
+                  </div>
+                </div>
+
+                <!-- Note for Audit Log (Required) -->
+                <div class="mb-4">
+                  <label class="form-label small fw-semibold">Note for the audit log (required)</label>
+                  <textarea name="audit_note" id="audit-note" class="form-control" rows="2" placeholder="Audit note..." required>Confirmed registration fee scam. Job deleted and employer suspended.</textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-grid gap-2">
+                  <button type="submit" name="action" value="delete" class="btn btn-danger py-2 fw-bold" id="btn-delete-job">
+                    Delete job and close reports
+                  </button>
+                  <div class="row g-2">
+                    <div class="col-6">
+                      <button type="submit" name="action" value="dismiss" class="btn btn-outline-secondary w-100 py-2">
+                        Dismiss reports
+                      </button>
+                    </div>
+                    <div class="col-6">
+                      <button type="submit" name="action" value="warn" class="btn btn-outline-warning w-100 py-2 text-dark">
+                        Warn employer
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
