@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-3">
+  <div class="mb-3">
+    <a href="{{ url_for('seeker.job_detail', job_id=job.id) }}" class="text-decoration-none text-muted fw-semibold small">
+      <i class="bi bi-arrow-left me-1"></i> Back to job
+    </a>
+  </div>
+
+  <div class="row">
+    <!-- Left Report Form Card -->
+    <div class="col-lg-7 mb-3">
+      <div class="lv-card p-4">
+        <h3 class="fw-bold mb-1">Report this job</h3>
+        <p class="text-muted small mb-4">{{ job.title }} · {{ job.shop.shop_name }}</p>
+
+        <form method="POST" action="{{ url_for('seeker.report_job', job_id=job.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+          <!-- Radio Options -->
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-muted">SELECT REASON</label>
+
+            <div class="form-check p-3 border rounded mb-2 bg-light">
+              <input class="form-check-input" type="radio" name="reason" id="r1" value="asked_money" checked>
+              <label class="form-check-label fw-semibold" for="r1">
+                Asked me for money (registration fee, advance, deposit)
+              </label>
+            </div>
+
+            <div class="form-check p-3 border rounded mb-2">
+              <input class="form-check-input" type="radio" name="reason" id="r2" value="fake_shop">
+              <label class="form-check-label fw-semibold" for="r2">
+                Fake or no such shop
+              </label>
+            </div>
+
+            <div class="form-check p-3 border rounded mb-2">
+              <input class="form-check-input" type="radio" name="reason" id="r3" value="wrong_location_pay">
+              <label class="form-check-label fw-semibold" for="r3">
+                Wrong location or pay
+              </label>
+            </div>
+
+            <div class="form-check p-3 border rounded mb-2">
+              <input class="form-check-input" type="radio" name="reason" id="r4" value="rude_unsafe">
+              <label class="form-check-label fw-semibold" for="r4">
+                Rude or unsafe
+              </label>
+            </div>
+
+            <div class="form-check p-3 border rounded mb-2">
+              <input class="form-check-input" type="radio" name="reason" id="r5" value="other">
+              <label class="form-check-label fw-semibold" for="r5">
+                Something else
+              </label>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label small fw-semibold">Add details (optional)</label>
+            <textarea name="details" class="form-control" rows="3" placeholder="What happened?"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-lv-danger w-100 py-2 fw-bold">
+            Send report
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right Moderation Info Card -->
+    <div class="col-lg-5">
+      <div class="lv-card p-4">
+        <h5 class="fw-bold mb-3">What happens next</h5>
+        <div class="d-flex align-items-start gap-2 mb-3">
+          <span class="badge bg-primary rounded-circle">1</span>
+          <span class="small text-dark">We review every report within 24 hours.</span>
+        </div>
+        <div class="d-flex align-items-start gap-2 mb-3">
+          <span class="badge bg-primary rounded-circle">2</span>
+          <span class="small text-dark">After 3 reports the job is auto-hidden until reviewed.</span>
+        </div>
+        <div class="d-flex align-items-start gap-2 mb-4">
+          <span class="badge bg-primary rounded-circle">3</span>
+          <span class="small text-dark">You can follow status in Support → My tickets.</span>
+        </div>
+
+        <div class="alert alert-warning py-3 px-3 small mb-0 border-0" style="background-color: #FFF3CD; color: #664D03;">
+          <i class="bi bi-telephone-exclamation-fill me-1"></i>
+          <strong>Already paid money?</strong> Call the National Cyber Crime helpline <strong>1930</strong>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
