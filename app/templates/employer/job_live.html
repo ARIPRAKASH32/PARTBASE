@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5 text-center">
+      <div class="lv-card p-4 p-md-5">
+        <div class="mb-3">
+          <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 72px; height: 72px; font-size: 2.2rem;">
+            ✓
+          </div>
+        </div>
+
+        <h2 class="fw-bold mb-2">Job is live</h2>
+        <p class="text-muted mb-4">
+          People within 3 km can see it now.<br>
+          {% if shop and not shop.is_verified %}
+            <span class="text-secondary small">(Unverified shop: "Sent for quick review, usually under 1 hour.")</span>
+          {% endif %}
+        </p>
+
+        <div class="d-grid gap-2 mb-3">
+          {% if job %}
+            {% set share_text = "Micro-job in Chennai: " ~ job.title ~ " at " ~ shop.shop_name ~ " (₹" ~ job.pay_amount ~ "/" ~ job.pay_type ~ "). Apply now on LocalVelai!" %}
+            <a href="https://wa.me/?text={{ share_text|urlencode }}" target="_blank" class="btn btn-lv-success py-2 fw-bold">
+              <i class="bi bi-whatsapp me-1"></i> Share on WhatsApp
+            </a>
+            <a href="{{ url_for('employer.job_detail', job_id=job.id) }}" class="btn btn-lv-outline py-2 fw-semibold">
+              View job and applicants
+            </a>
+          {% else %}
+            <a href="{{ url_for('employer.posts') }}" class="btn btn-lv-outline py-2 fw-semibold">
+              View your posts
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

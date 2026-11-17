@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row min-vh-75 align-items-center justify-content-center">
+    <div class="col-lg-5 mb-4 mb-lg-0 text-center text-lg-start">
+      <h1 class="hero-title mb-3">Hire helpers.<br>Today.</h1>
+      <p class="hero-subtitle mb-4">Hyper-local micro-jobs for Chennai</p>
+      {% include 'components/_safety_banner.html' %}
+    </div>
+
+    <div class="col-lg-6">
+      <div class="lv-card p-4 p-md-5">
+        <h3 class="fw-bold mb-1">Set up your shop</h3>
+        <p class="text-muted small mb-4">Seekers see this before they apply.</p>
+
+        <form method="POST" action="{{ url_for('employer.setup') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Shop name</label>
+            <input type="text" name="shop_name" value="{{ user.shop.shop_name if user.shop else '' }}" class="form-control form-control-lg fs-6" placeholder="e.g. Sri Murugan Tailors" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Your name</label>
+            <input type="text" name="owner_name" value="{{ user.shop.owner_name if user.shop else (user.name or '') }}" class="form-control form-control-lg fs-6" placeholder="e.g. Murugan" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Shop address</label>
+            <textarea name="address" class="form-control fs-6" rows="2" placeholder="e.g. No. 12, OMR Main Road, Thoraipakkam, Chennai" required>{{ user.shop.address if user.shop else '' }}</textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Area</label>
+            <select name="area_id" class="form-select fs-6" required>
+              <option value="" disabled {% if not user.area_id %}selected{% endif %}>Select shop area</option>
+              {% for a in areas %}
+                <option value="{{ a.id }}" {% if user.shop and user.shop.area_id == a.id %}selected{% endif %}>
+                  {{ a.name }}, Chennai ({{ a.pincode }})
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Verified badge (optional)</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light"><i class="bi bi-patch-check text-primary"></i></span>
+              <input type="text" name="proof_value" value="{{ user.shop.proof_value if user.shop else '' }}" class="form-control fs-6" placeholder="Add shop photo or Google Maps link">
+            </div>
+            <div class="form-text small text-muted mt-1">
+              Without it, the first post is checked by our team before it shows.
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-lv-primary w-100 py-2 fs-6 fw-bold">
+            Save and continue
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
