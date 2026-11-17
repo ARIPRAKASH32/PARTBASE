@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-3">
+  <h3 class="fw-bold mb-1">Support</h3>
+  <p class="text-muted small mb-4">Raise a problem here. We reply within 24 hours.</p>
+
+  <div class="row">
+    <!-- Left Create Ticket Form -->
+    <div class="col-lg-7 mb-4">
+      <div class="lv-card p-4">
+        <h5 class="fw-bold mb-3">Tell us what went wrong</h5>
+
+        <form method="POST" action="{{ url_for('support.support') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+          <!-- Role Indicator -->
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted">I AM A</label>
+            <div class="d-flex gap-2">
+              <span class="btn btn-sm {% if role == 'seeker' %}btn-primary active{% else %}btn-outline-secondary disabled{% endif %}">
+                Job seeker
+              </span>
+              <span class="btn btn-sm {% if role == 'employer' %}btn-primary active{% else %}btn-outline-secondary disabled{% endif %}">
+                Employer
+              </span>
+            </div>
+          </div>
+
+          <!-- Issue Dropdown -->
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Issue</label>
+            <select name="issue_type" class="form-select" required>
+              <option value="scam_fee_request" {% if role == 'seeker' %}selected{% endif %}>Scam or fee request</option>
+              <option value="fake_applicant" {% if role == 'employer' %}selected{% endif %}>Fake applicant</option>
+              <option value="wrong_pay">Wrong pay shown</option>
+              <option value="boost_payment_failed">Boost payment failed</option>
+              <option value="other">Other issue</option>
+            </select>
+          </div>
+
+          <!-- Related Job Dropdown -->
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Related job (optional)</label>
+            <select name="job_id" class="form-select">
+              <option value="">None / Not job specific</option>
+              {% for j in user_jobs %}
+                <option value="{{ j.id }}">{{ j.title }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- What happened? -->
+          <div class="mb-4">
+            <label class="form-label small fw-semibold">What happened?</label>
+            <textarea name="description" class="form-control" rows="4" placeholder="Describe the issue in detail..." required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-lv-primary w-100 py-2 fw-bold">
+            Send to support
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right My Tickets List -->
+    <div class="col-lg-5">
+      <div class="lv-card p-4">
+        <h5 class="fw-bold mb-3">My tickets</h5>
+
+        {% if tickets %}
+          {% for t in tickets %}
+            <div class="border rounded p-3 mb-2 bg-light">
+              <div class="d-flex justify-content-between align-items-start mb-1">
+                <span class="fw-bold text-dark small">{{ t.issue_type.replace('_', ' ').capitalize() }}</span>
+                <span class="chip-status chip-status-{{ t.status }} text-capitalize">
+                  {{ t.status.replace('_', ' ') }}
+                </span>
+              </div>
+              <div class="text-muted small mb-1">
+                <strong>{{ t.ticket_code }}</strong> · {{ t.job.title if t.job else 'General support' }}
+              </div>
+              {% if t.admin_reply %}
+                <div class="mt-2 pt-2 border-top small text-primary">
+                  <strong>Support reply:</strong> {{ t.admin_reply }}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted small mb-0">You have no open tickets.</p>
+        {% endif %}
+      </div>
+
+      <!-- Safety Banner Callout -->
+      {% include 'components/_safety_banner.html' %}
+    </div>
+  </div>
+</div>
+{% endblock %}
