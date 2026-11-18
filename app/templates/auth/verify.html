@@ -5,7 +5,7 @@
   <div class="row min-vh-75 align-items-center justify-content-center">
     <!-- Left Hero Column -->
     <div class="col-lg-5 mb-4 mb-lg-0 text-center text-lg-start">
-      <h1 class="hero-title mb-3">Jobs near you.<br>Today.</h1>
+      <h1 class="hero-title mb-3">Jobs near you.<br><span class="text-primary text-gradient">Today.</span></h1>
       <p class="hero-subtitle mb-4">Hyper-local micro-jobs for Chennai</p>
       {% include 'components/_safety_banner.html' %}
     </div>
@@ -14,7 +14,7 @@
     <div class="col-lg-5 col-md-8">
       <div class="lv-card p-4 p-md-5">
         <h3 class="fw-bold mb-1">Verify OTP</h3>
-        <p class="text-muted small mb-3">
+        <p class="text-muted small mb-4">
           Sent to <span class="fw-bold text-dark">{{ mask_phone(phone) }}</span> ·
           <a href="{{ url_for('auth.login') }}" class="text-decoration-none">Edit number</a>
         </p>
@@ -35,15 +35,15 @@
 
           <div class="d-flex justify-content-between align-items-center text-muted small mb-3">
             <span>Resend OTP in <span id="otp-timer" class="fw-bold text-primary">0:30</span></span>
-            <span>OTP expires in 5 minutes</span>
+            <span>Expires in 5 mins</span>
           </div>
 
-          <button type="submit" class="btn btn-lv-primary w-100 py-2 fs-6 fw-bold mb-3">
-            Verify
+          <button type="submit" class="btn btn-lv-primary w-100 py-2 fs-6 fw-bold mb-3 shadow">
+            Verify & Continue
           </button>
 
           <div class="alert alert-warning py-2 px-3 small mb-0 border-0 text-center" style="background-color: #FEF3C7; color: #92400E;">
-            <i class="bi bi-shield-exclamation me-1"></i> 3 wrong tries lock the number for 10 minutes.
+            <i class="bi bi-shield-exclamation me-1"></i> 3 incorrect tries lock the number for 10 minutes.
           </div>
         </form>
       </div>
