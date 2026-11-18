@@ -8,7 +8,7 @@ from app.models import OTPRequest, User
 logger = logging.getLogger(__name__)
 
 def _hash_code(phone: str, code: str) -> str:
-    salt = "localvelai-otp-salt-chennai-2025"
+    salt = "partbase-otp-salt-chennai-2025"
     return hashlib.sha256(f"{salt}:{phone}:{code}".encode("utf-8")).hexdigest()
 
 class BaseOTPProvider:

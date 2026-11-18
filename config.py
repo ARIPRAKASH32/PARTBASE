@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY", "localvelai-production-super-secret-key-chennai-2025")
+    SECRET_KEY = os.environ.get("SECRET_KEY", "partbase-production-super-secret-key-chennai-2025")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Database URL with SQLite fallback
