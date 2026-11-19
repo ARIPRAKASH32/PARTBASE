@@ -5,25 +5,26 @@
   <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5 text-center">
       <div class="lv-card p-4 p-md-5">
-        <div class="mb-3">
-          <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 72px; height: 72px; font-size: 2.2rem;">
-            ✓
+        <div class="mb-4">
+          <div class="rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 76px; height: 76px; background: rgba(5, 97, 226, 0.15); border: 2px solid var(--jp-blue-hover); color: var(--jp-blue-hover); font-size: 2.2rem;">
+            <i class="bi bi-shield-check"></i>
           </div>
         </div>
 
-        <h2 class="fw-bold mb-2">Thank you</h2>
-        <p class="text-muted mb-4">
-          Report <strong>{{ ticket_code }}</strong> sent. We review within 24 hours and update you in Support.
+        <h3 class="fw-bold text-white mb-2">Report Submitted</h3>
+        <p class="text-muted small mb-4">
+          Tracking Code: <strong class="text-white font-monospace">{{ ticket_code }}</strong>.<br>
+          Our team reviews incident reports within 24 hours. The listing is auto-hidden upon receiving multiple complaints.
         </p>
 
         <div class="d-grid gap-2 mb-3">
           <a href="{{ url_for('seeker.jobs') }}" class="btn btn-lv-primary py-2 fw-bold">
-            Back to jobs
+            <i class="bi bi-arrow-left me-1"></i> Back to Jobs Feed
           </a>
         </div>
 
-        <a href="{{ url_for('support.support') }}" class="text-decoration-none fw-semibold text-primary small">
-          View ticket in Support
+        <a href="{{ url_for('support.support') }}" class="jp-cta-link small">
+          Track Investigation in Support Inbox →
         </a>
       </div>
     </div>
