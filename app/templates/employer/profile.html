@@ -4,52 +4,55 @@
 <div class="container py-4">
   <div class="row justify-content-center">
     <div class="col-lg-6 col-md-8">
-      <h3 class="fw-bold mb-3">Profile</h3>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold mb-0 text-white">Merchant Profile</h3>
+        <span class="badge-chennai">Chennai Merchant Network</span>
+      </div>
 
-      <div class="lv-card p-4">
+      <div class="lv-card p-4 p-md-5">
         <!-- Top Info Header -->
-        <div class="d-flex justify-content-between align-items-start mb-2">
+        <div class="d-flex justify-content-between align-items-start mb-3">
           <div>
-            <h4 class="fw-bold mb-0 text-dark">{{ shop.shop_name if shop else 'My Shop' }}</h4>
-            <div class="text-muted small mt-1">
-              ★ {{ shop.rating_avg if shop else '0.0' }} ·
+            <h4 class="fw-bold mb-1 text-white">{{ shop.shop_name if shop else 'My Shop' }}</h4>
+            <div class="text-muted small">
+              <span class="text-warning">★ {{ shop.rating_avg if shop else '0.0' }}</span> ·
               {{ shop.rating_count if shop else 0 }} ratings ·
-              {{ mask_phone(user.phone) }}
+              <span class="font-monospace text-white-50">{{ mask_phone(user.phone) }}</span>
             </div>
           </div>
           {% if shop and shop.is_verified %}
-            <span class="chip-verified"><i class="bi bi-patch-check-fill"></i> Verified</span>
+            <span class="jp-chip jp-chip-verified"><i class="bi bi-patch-check-fill me-1"></i>Verified Merchant</span>
           {% else %}
-            <span class="badge bg-secondary">Unverified</span>
+            <span class="badge bg-secondary bg-opacity-25 text-white-50">Unverified</span>
           {% endif %}
         </div>
 
-        <hr class="my-3 text-muted">
+        <div class="jp-card-divider my-4"></div>
 
         <form method="POST" action="{{ url_for('support.profile') }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-          <div class="mb-3">
-            <label class="form-label fw-semibold small">Shop name</label>
+          <div class="mb-4">
+            <label class="form-label fw-semibold small">Store / Business Name</label>
             <input type="text" name="shop_name" value="{{ shop.shop_name if shop else '' }}" class="form-control" required>
           </div>
 
-          <div class="mb-3">
-            <label class="form-label fw-semibold small">Owner</label>
+          <div class="mb-4">
+            <label class="form-label fw-semibold small">Proprietor Name</label>
             <input type="text" name="owner_name" value="{{ shop.owner_name if shop else (user.name or '') }}" class="form-control" required>
           </div>
 
           <div class="mb-4">
-            <label class="form-label fw-semibold small">Shop address</label>
+            <label class="form-label fw-semibold small">Physical Address</label>
             <textarea name="address" class="form-control" rows="2" required>{{ shop.address if shop else '' }}</textarea>
           </div>
 
-          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pt-2">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-2">
             <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-lv-primary px-4 fw-semibold">Save</button>
-              <a href="{{ url_for('support.switch_role') }}" class="btn btn-lv-outline fw-semibold">Switch to finding jobs</a>
+              <button type="submit" class="btn btn-lv-primary px-4 fw-semibold">Save Profile</button>
+              <a href="{{ url_for('support.switch_role') }}" class="btn btn-lv-outline fw-semibold">Switch to Seeker</a>
             </div>
-            <a href="{{ url_for('auth.logout') }}" class="text-danger small text-decoration-none fw-semibold">Sign out</a>
+            <a href="{{ url_for('auth.logout') }}" class="text-danger small text-decoration-none fw-semibold">Sign Out</a>
           </div>
         </form>
       </div>
