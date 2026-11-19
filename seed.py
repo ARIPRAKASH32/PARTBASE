@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app import create_app
 from app.extensions import db
 from app.models import User, Area, Shop, SeekerProfile, Job, Application, Rating, Report, Ticket, Payment, Draft
@@ -273,7 +273,7 @@ def seed_database():
             details="Packing grocery bags and sorting orders for fast dispatch.",
             status="open",
             is_boosted=True,
-            boost_expires_at=datetime.utcnow() + timedelta(hours=24),
+            boost_expires_at=datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(hours=24),
             view_count=35
         )
         db.session.add(job2)

@@ -14,7 +14,7 @@ def seeker_required(f):
         if not session.get("user_id"):
             session["intent_role"] = "seeker"
             return redirect(url_for("auth.login"))
-        user = User.query.get(session["user_id"])
+        user = db.session.get(User, session["user_id"])
         if not user:
             session.clear()
             return redirect(url_for("auth.login"))
@@ -24,7 +24,7 @@ def seeker_required(f):
 @seeker_bp.route("/setup", methods=["GET", "POST"])
 @seeker_required
 def setup():
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
     areas = Area.query.order_by(Area.name).all()
 
     if request.method == "POST":
@@ -40,7 +40,7 @@ def setup():
         user.name = name
         if area_id:
             user.area_id = int(area_id)
-            area = Area.query.get(int(area_id))
+            area = db.session.get(Area, int(area_id))
             if area:
                 user.lat = area.lat
                 user.lng = area.lng
@@ -63,7 +63,7 @@ def setup():
 @seeker_bp.route("/jobs")
 def jobs():
     user_id = session.get("user_id")
-    user = User.query.get(user_id) if user_id else None
+    user = db.session.get(User, user_id) if user_id else None
     profile = user.seeker_profile if user else None
 
     # Filters from query params
@@ -78,7 +78,7 @@ def jobs():
     if not selected_categories and profile and profile.interests:
         selected_categories = [i.strip() for i in profile.interests.split(",") if i.strip()]
 
-    selected_area = Area.query.get(area_id)
+    selected_area = db.session.get(Area, area_id)
     center_lat = (user.lat if user and user.lat else (selected_area.lat if selected_area else 12.9352))
     center_lng = (user.lng if user and user.lng else (selected_area.lng if selected_area else 80.2290))
 
@@ -132,7 +132,7 @@ def jobs():
 @seeker_bp.route("/jobs/<int:job_id>", methods=["GET", "POST"])
 def job_detail(job_id):
     user_id = session.get("user_id")
-    user = User.query.get(user_id) if user_id else None
+    user = db.session.get(User, user_id) if user_id else None
     job = Job.query.get_or_404(job_id)
 
     # Record view
@@ -218,7 +218,7 @@ def applied_success():
 @seeker_bp.route("/applications")
 @seeker_required
 def applications():
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
     tab = request.args.get("tab", "all")
 
     query = Application.query.filter_by(seeker_id=user.id)
@@ -239,7 +239,7 @@ def applications():
 @seeker_bp.route("/applications/<int:app_id>/withdraw", methods=["POST"])
 @seeker_required
 def withdraw_application(app_id):
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
     app_entry = Application.query.filter_by(id=app_id, seeker_id=user.id).first_or_404()
     if app_entry.status == "applied":
         app_entry.status = "withdrawn"
@@ -250,7 +250,7 @@ def withdraw_application(app_id):
 @seeker_bp.route("/rate/<int:app_id>", methods=["GET", "POST"])
 @seeker_required
 def rate(app_id):
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
     app_entry = Application.query.filter_by(id=app_id, seeker_id=user.id).first_or_404()
     job = app_entry.job
     shop = job.shop
@@ -291,7 +291,7 @@ def rate(app_id):
 @seeker_bp.route("/report/<int:job_id>", methods=["GET", "POST"])
 @seeker_required
 def report_job(job_id):
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
     job = Job.query.get_or_404(job_id)
 
     if request.method == "POST":
@@ -337,7 +337,7 @@ def report_sent():
 @seeker_bp.route("/map-helper")
 @seeker_required
 def map_helper():
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
     # Route to next hired job if any
     next_hired_app = Application.query.filter_by(seeker_id=user.id, status="hired").first()
     if next_hired_app and next_hired_app.job and next_hired_app.job.shop:

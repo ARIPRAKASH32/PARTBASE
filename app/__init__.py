@@ -42,7 +42,7 @@ def create_app(config_class=Config):
         user = None
         user_id = session.get("user_id")
         if user_id:
-            user = User.query.get(user_id)
+            user = db.session.get(User, user_id)
         areas = Area.query.order_by(Area.name).all() if db.engine else []
         return {
             "current_user": user,
@@ -59,7 +59,7 @@ def create_app(config_class=Config):
         user_id = session.get("user_id")
         if user_id:
             from app.models import User
-            user = User.query.get(user_id)
+            user = db.session.get(User, user_id)
             if user and user.is_blocked:
                 session.clear()
                 flash("Your account has been suspended for safety violations. Please contact support.", "danger")

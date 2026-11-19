@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.extensions import db
 from app.models import Payment, Job
 
@@ -10,7 +10,7 @@ class PaymentService:
         Boosts a job for 24 hours with ₹49.
         Idempotent: If payment is already successful or job already boosted, prevents double charging.
         """
-        job = Job.query.get(job_id)
+        job = db.session.get(Job, job_id)
         if not job:
             return {"ok": False, "error": "Job not found"}
 
@@ -18,7 +18,7 @@ class PaymentService:
             return {"ok": False, "error": "Unauthorized: Not your shop job"}
 
         # Idempotency check: check if already boosted
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
         if job.is_currently_boosted:
             return {
                 "ok": True,

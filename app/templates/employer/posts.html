@@ -1,31 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container py-3">
+<div class="container py-4">
   <!-- Draft Resume Alert Banner -->
   {% if draft_data and draft_data.get('title') %}
-    <div class="alert alert-info d-flex justify-content-between align-items-center py-2 px-3 mb-3 shadow-sm">
+    <div class="alert alert-info d-flex justify-content-between align-items-center py-2 px-3 mb-4 shadow-sm">
       <div>
         <i class="bi bi-pencil-square me-1"></i> You have an unfinished draft: <strong>{{ draft_data.get('title') }}</strong>.
       </div>
-      <a href="{{ url_for('employer.post_job') }}" class="btn btn-sm btn-primary">Resume draft</a>
+      <a href="{{ url_for('employer.post_job') }}" class="btn btn-sm btn-lv-primary py-1">Resume Draft</a>
     </div>
   {% endif %}
 
-  <!-- Shop Profile Header Banner -->
-  <div class="lv-card p-3 p-md-4 mb-3 border-0 bg-white shadow-sm">
-    <div class="d-flex flex-wrap justify-content-between align-items-center">
+  <!-- Shop Profile Header Module (Juspay Dark Architecture) -->
+  <div class="lv-card p-4 mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
       <div class="d-flex align-items-center gap-3">
-        <div class="bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 58px; height: 58px; background: rgba(5, 97, 226, 0.15); border: 1.5px solid var(--jp-blue); color: var(--jp-blue-hover);">
           <i class="bi bi-shop fs-2"></i>
         </div>
         <div>
           <div class="d-flex align-items-center gap-2 mb-1">
-            <h4 class="fw-bold mb-0 text-dark">{{ shop.shop_name }}</h4>
+            <h3 class="fw-bold mb-0 text-white">{{ shop.shop_name }}</h3>
             {% if shop.is_verified %}
-              <span class="chip-verified"><i class="bi bi-patch-check-fill"></i> Verified Shop</span>
+              <span class="chip chip-verified"><i class="bi bi-patch-check-fill"></i> Verified Merchant</span>
             {% else %}
-              <span class="badge bg-warning text-dark"><i class="bi bi-clock-history"></i> Verification Pending</span>
+              <span class="chip chip-urgent"><i class="bi bi-clock-history"></i> Verification Pending</span>
             {% endif %}
           </div>
           <span class="text-muted small">
@@ -37,37 +37,37 @@
           </span>
         </div>
       </div>
-      <div class="mt-2 mt-md-0 d-flex gap-2">
-        <a href="{{ url_for('employer.setup') }}" class="btn btn-sm btn-outline-secondary">
-          <i class="bi bi-gear me-1"></i> Edit Shop Details
+      <div class="d-flex gap-2">
+        <a href="{{ url_for('employer.setup') }}" class="btn btn-sm btn-lv-outline">
+          <i class="bi bi-gear me-1"></i> Edit Shop
         </a>
-        <a href="{{ url_for('employer.post_job') }}" class="btn btn-sm btn-lv-primary shadow-sm">
-          <i class="bi bi-plus-lg me-1"></i> Post a Job
+        <a href="{{ url_for('employer.post_job') }}" class="btn btn-sm btn-lv-primary">
+          <i class="bi bi-plus-lg me-1"></i> Post New Job
         </a>
       </div>
     </div>
   </div>
 
-  <!-- Employer KPI Metric Cards -->
-  <div class="row g-2 mb-3">
+  <!-- Employer KPI Metric Cards (Juspay Stat Boxes) -->
+  <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
-      <div class="lv-card p-3 h-100 text-center mb-0">
-        <div class="text-muted small fw-semibold text-uppercase">Total Job Posts</div>
-        <div class="fs-3 fw-bold text-primary">{{ jobs|length }}</div>
+      <div class="stat-box text-center">
+        <div class="stat-label">TOTAL LISTINGS</div>
+        <div class="stat-number text-primary">{{ jobs|length }}</div>
       </div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="lv-card p-3 h-100 text-center mb-0">
-        <div class="text-muted small fw-semibold text-uppercase">Active Hiring</div>
-        <div class="fs-3 fw-bold text-success">
+      <div class="stat-box text-center">
+        <div class="stat-label">ACTIVE SHIFTS</div>
+        <div class="stat-number text-success">
           {{ jobs|selectattr('status', 'equalto', 'open')|list|length }}
         </div>
       </div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="lv-card p-3 h-100 text-center mb-0">
-        <div class="text-muted small fw-semibold text-uppercase">Total Applicants</div>
-        <div class="fs-3 fw-bold text-warning">
+      <div class="stat-box text-center">
+        <div class="stat-label">TOTAL APPLICANTS</div>
+        <div class="stat-number" style="color: var(--jp-cyan);">
           {% set total_apps = namespace(count=0) %}
           {% for j in jobs %}
             {% set total_apps.count = total_apps.count + (j.applications|length) %}
@@ -77,70 +77,79 @@
       </div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="lv-card p-3 h-100 text-center mb-0">
-        <div class="text-muted small fw-semibold text-uppercase">Urgent Boosted</div>
-        <div class="fs-3 fw-bold text-danger">
-          {{ jobs|selectattr('is_currently_boosted')|list|length }}
+      <div class="stat-box text-center">
+        <div class="stat-label">TOTAL HIRED</div>
+        <div class="stat-number text-white">
+          {% set total_hired = namespace(count=0) %}
+          {% for j in jobs %}
+            {% set total_hired.count = total_hired.count + j.hired_count %}
+          {% endfor %}
+          {{ total_hired.count }}
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Posts List -->
-  <div class="d-flex justify-content-between align-items-center mb-2">
-    <h5 class="fw-bold mb-0 text-dark">Your Micro-Job Listings</h5>
-    <span class="text-muted small">{{ jobs|length }} listings managed</span>
+  <!-- Job Postings List -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold mb-0 text-white">Your Shift Postings</h4>
+    <span class="text-muted small">{{ jobs|length }} Total Posts</span>
   </div>
 
   {% if jobs %}
-    <div class="row">
-      <div class="col-12">
-        {% for job in jobs %}
-          <div class="lv-card p-3 mb-3">
-            <div class="d-flex flex-wrap justify-content-between align-items-center">
-              <div class="mb-2 mb-md-0">
-                <div class="d-flex align-items-center gap-2 mb-1">
-                  <h5 class="fw-bold mb-0 text-dark">{{ job.title }}</h5>
-                  <span class="chip-status chip-status-{{ job.status }} text-capitalize">
-                    {{ job.status.replace('_', ' ') }}
-                  </span>
-                  {% if job.is_currently_boosted %}
-                    <span class="chip-urgent"><i class="bi bi-lightning-charge-fill"></i> Urgent Boost Active</span>
-                  {% endif %}
-                </div>
-                <div class="text-muted small">
-                  {% if job.day_option == 'today' %}Today{% elif job.day_option == 'tomorrow' %}Tomorrow{% else %}Weekend{% endif %}
-                  {% if job.time_range %}· {{ job.time_range }}{% endif %}
-                  · <span class="fw-semibold text-dark">{{ job.applications|length }} applicants received</span>
-                  · <span class="fw-bold text-primary">{{ job.hired_count }} of {{ job.people_needed }} helpers hired</span>
-                  · <span class="fw-bold text-success">₹{{ job.pay_amount }}/{{ job.pay_type }}</span>
-                </div>
-              </div>
-
-              <div class="d-flex gap-2 align-items-center">
-                <a href="{{ url_for('employer.job_detail', job_id=job.id) }}" class="btn btn-sm btn-lv-primary px-3 shadow-sm">
-                  <i class="bi bi-people-fill me-1"></i> Review Applicants ({{ job.applications|length }})
-                </a>
-                {% if not job.is_currently_boosted and job.status == 'open' %}
-                  <a href="{{ url_for('employer.boost_job', job_id=job.id) }}" class="btn btn-sm btn-warning text-dark fw-bold">
-                    <i class="bi bi-lightning-charge-fill me-1"></i> Boost (₹49)
-                  </a>
+    <div class="d-flex flex-column gap-3">
+      {% for job in jobs %}
+        <div class="lv-card p-4 mb-0">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+            <div>
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <h5 class="fw-bold text-white mb-0">{{ job.title }}</h5>
+                {% if job.status == 'open' %}
+                  <span class="chip chip-open">Open</span>
+                {% elif job.status == 'closed' %}
+                  <span class="badge bg-secondary bg-opacity-25 text-white-50 px-2 py-1 rounded">Closed</span>
+                {% elif job.status == 'completed' %}
+                  <span class="chip chip-verified">Completed</span>
                 {% endif %}
-                <a href="{{ url_for('employer.post_job', copy_from=job.id) }}" class="btn btn-sm btn-outline-secondary" title="Clone as new job">
-                  <i class="bi bi-files me-1"></i> Copy
-                </a>
+                {% if job.is_currently_boosted %}
+                  <span class="chip chip-urgent"><i class="bi bi-lightning-charge-fill"></i> Boosted (Urgent)</span>
+                {% endif %}
               </div>
+              <span class="text-muted small">
+                {{ job.category|replace('_', ' ')|title }} ·
+                {{ job.time_range or job.day_option|title }} ·
+                {{ job.hired_count }}/{{ job.people_needed }} Hired
+              </span>
+            </div>
+            <div class="text-end">
+              <span class="pay-amount">₹{{ job.pay_amount }}/{{ job.pay_type }}</span>
             </div>
           </div>
-        {% endfor %}
-      </div>
+
+          <div class="d-flex justify-content-between align-items-center pt-3 border-top border-secondary border-opacity-25 mt-3 flex-wrap gap-2">
+            <span class="small text-muted">
+              <strong class="text-white">{{ job.applications|length }}</strong> Applicants Received
+            </span>
+            <div class="d-flex gap-2">
+              {% if not job.is_currently_boosted and job.status == 'open' %}
+                <a href="{{ url_for('employer.boost_job', job_id=job.id) }}" class="btn btn-sm btn-outline-warning">
+                  <i class="bi bi-lightning-charge me-1"></i> Boost ₹49
+                </a>
+              {% endif %}
+              <a href="{{ url_for('employer.job_detail', job_id=job.id) }}" class="btn btn-sm btn-lv-primary">
+                View Applicants ({{ job.applications|length }}) →
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
     </div>
   {% else %}
     <div class="lv-card p-5 text-center">
-      <i class="bi bi-megaphone text-muted fs-1 mb-2"></i>
-      <h5 class="fw-bold">No jobs posted yet</h5>
-      <p class="text-muted small mb-3">Post a micro-job in 30 seconds to find nearby helpers today.</p>
-      <a href="{{ url_for('employer.post_job') }}" class="btn btn-lv-primary">Post your first job</a>
+      <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
+      <h4 class="fw-bold text-white">No jobs posted yet</h4>
+      <p class="text-muted small mb-4">Post your first micro-job in 30 seconds to connect with helpers nearby.</p>
+      <a href="{{ url_for('employer.post_job') }}" class="btn btn-lv-primary">Post a Job (Free)</a>
     </div>
   {% endif %}
 </div>

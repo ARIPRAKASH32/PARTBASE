@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.extensions import db
 
 class Area(db.Model):
@@ -146,7 +146,7 @@ class Job(db.Model):
     def is_currently_boosted(self):
         if not self.is_boosted:
             return False
-        if self.boost_expires_at and self.boost_expires_at < datetime.utcnow():
+        if self.boost_expires_at and self.boost_expires_at < datetime.now(timezone.utc).replace(tzinfo=None):
             return False
         return True
 
@@ -331,15 +331,15 @@ class OTPRequest(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def is_locked(self):
-        if self.locked_until and self.locked_until > datetime.utcnow():
+        if self.locked_until and self.locked_until > datetime.now(timezone.utc).replace(tzinfo=None):
             return True
         return False
 
     def is_expired(self):
-        return datetime.utcnow() > self.expires_at
+        return datetime.now(timezone.utc).replace(tzinfo=None) > self.expires_at
 
     def can_resend(self):
-        return datetime.utcnow() >= self.resend_available_at
+        return datetime.now(timezone.utc).replace(tzinfo=None) >= self.resend_available_at
 
 class AuditLog(db.Model):
     __tablename__ = "audit_logs"

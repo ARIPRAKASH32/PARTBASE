@@ -1,5 +1,5 @@
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app import create_app
 from app.extensions import db
 from app.models import OTPRequest, User
@@ -44,7 +44,7 @@ def test_otp_expiry(app):
 
     # Artificially expire the OTP
     req = OTPRequest.query.filter_by(phone=phone).first()
-    req.expires_at = datetime.utcnow() - timedelta(minutes=1)
+    req.expires_at = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(minutes=1)
     db.session.commit()
 
     verify_res = OTPService.verify_otp(phone, code)

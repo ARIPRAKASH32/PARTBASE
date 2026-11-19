@@ -1,7 +1,7 @@
 import hashlib
 import random
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.extensions import db
 from app.models import OTPRequest, User
 
@@ -28,6 +28,44 @@ class Msg91Provider(BaseOTPProvider):
         print(f"[Msg91 SMS Gateway] Sent OTP {code} to {phone}")
         return True
 
+class Fast2SMSProvider(BaseOTPProvider):
+    def send(self, phone: str, code: str) -> bool:
+        import os
+        import requests
+        api_key = os.environ.get("FAST2SMS_API_KEY")
+        if not api_key:
+            print("\n[Fast2SMS WARNING] FAST2SMS_API_KEY missing in .env! Printing to console instead.")
+            print(f"[OTP SERVICE FALLBACK] Phone: {phone} | Code: {code}\n")
+            return True
+        
+        # Strip +91 for Fast2SMS Indian 10-digit format
+        clean_phone = phone.replace("+91", "").strip()[-10:]
+        url = "https://www.fast2sms.com/dev/bulkV2"
+        payload = {
+            "variables_values": code,
+            "route": "otp",
+            "numbers": clean_phone
+        }
+        headers = {
+            'authorization': api_key,
+            'Content-Type': "application/x-www-form-urlencoded",
+            'Cache-Control': "no-cache"
+        }
+        try:
+            response = requests.post(url, data=payload, headers=headers, timeout=10)
+            res_data = response.json()
+            if res_data.get("return"):
+                print(f"\n[Fast2SMS SUCCESS] Real SMS OTP {code} successfully dispatched to {phone}!\n")
+                return True
+            else:
+                print(f"\n[Fast2SMS FAILED] Gateway returned: {res_data}\n")
+                print(f"[OTP SERVICE FALLBACK] Phone: {phone} | Code: {code}\n")
+                return False
+        except Exception as e:
+            print(f"\n[Fast2SMS ERROR] Exception sending SMS: {e}\n")
+            print(f"[OTP SERVICE FALLBACK] Phone: {phone} | Code: {code}\n")
+            return False
+
 class TwilioProvider(BaseOTPProvider):
     def send(self, phone: str, code: str) -> bool:
         logger.info(f"[Twilio Stub] Sending OTP {code} to {phone}")
@@ -36,7 +74,9 @@ class TwilioProvider(BaseOTPProvider):
 
 def get_otp_provider(provider_name="console") -> BaseOTPProvider:
     provider = provider_name.lower()
-    if provider == "msg91":
+    if provider == "fast2sms":
+        return Fast2SMSProvider()
+    elif provider == "msg91":
         return Msg91Provider()
     elif provider == "twilio":
         return TwilioProvider()
@@ -46,7 +86,7 @@ class OTPService:
     @staticmethod
     def send_otp(phone: str, provider_name="console") -> dict:
         phone = phone.strip()
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
         req = OTPRequest.query.filter_by(phone=phone).first()
 
         if req:
@@ -98,7 +138,7 @@ class OTPService:
     def verify_otp(phone: str, code: str) -> dict:
         phone = phone.strip()
         code = code.strip()
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
         req = OTPRequest.query.filter_by(phone=phone).first()
 
         if not req:

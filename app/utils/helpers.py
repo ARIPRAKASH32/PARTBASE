@@ -36,46 +36,44 @@ def reveal_ratings_if_both_rated(job_id, application_id=None):
         query = query.filter_by(application_id=application_id)
     
     ratings = query.all()
-    has_seeker_rated = any(r.direction == "seeker_to_shop" for r in ratings)
-    has_shop_rated = any(r.direction == "shop_to_seeker" for r in ratings)
+    seeker_to_shop = next((r for r in ratings if r.direction == "seeker_to_shop"), None)
+    shop_to_seeker = next((r for r in ratings if r.direction == "shop_to_seeker"), None)
 
-    if has_seeker_rated and has_shop_rated:
-        for r in ratings:
-            r.revealed = True
-        db.session.commit()
+    if not (seeker_to_shop and shop_to_seeker):
+        return False
 
-        # Update Shop ratings
-        seeker_to_shop_ratings = Rating.query.filter_by(direction="seeker_to_shop", revealed=True).all()
-        # Find which shop was rated
-        first_rating = ratings[0]
-        shop = Shop.query.filter_by(owner_user_id=first_rating.ratee_id).first() or \
-               Shop.query.filter_by(owner_user_id=first_rating.rater_id).first()
-        if shop:
-            shop_ratings = [r.stars for r in seeker_to_shop_ratings if r.ratee_id == shop.owner_user_id]
-            if shop_ratings:
-                shop.rating_count = len(shop_ratings)
-                shop.rating_avg = round(sum(shop_ratings) / len(shop_ratings), 1)
+    for r in ratings:
+        r.revealed = True
+    db.session.commit()
 
-        # Update Seeker ratings
-        seeker_profile = SeekerProfile.query.filter(
-            SeekerProfile.user_id.in_([first_rating.ratee_id, first_rating.rater_id])
-        ).first()
-        if seeker_profile:
-            shop_to_seeker_ratings = Rating.query.filter_by(
-                ratee_id=seeker_profile.user_id,
-                direction="shop_to_seeker",
-                revealed=True
-            ).all()
-            if shop_to_seeker_ratings:
-                stars_list = [r.stars for r in shop_to_seeker_ratings]
-                seeker_profile.rating_avg = round(sum(stars_list) / len(stars_list), 1)
-            # Count completed jobs
-            completed_apps = Application.query.filter_by(seeker_id=seeker_profile.user_id, status="completed").count()
-            seeker_profile.jobs_completed = max(seeker_profile.jobs_completed, completed_apps)
+    # Update Shop ratings — ratee_id on seeker_to_shop is the shop owner
+    shop = Shop.query.filter_by(owner_user_id=seeker_to_shop.ratee_id).first()
+    if shop:
+        all_shop_ratings = Rating.query.filter_by(
+            ratee_id=seeker_to_shop.ratee_id,
+            direction="seeker_to_shop",
+            revealed=True
+        ).all()
+        if all_shop_ratings:
+            shop.rating_count = len(all_shop_ratings)
+            shop.rating_avg = round(sum(r.stars for r in all_shop_ratings) / len(all_shop_ratings), 1)
 
-        db.session.commit()
-        return True
-    return False
+    # Update Seeker ratings — ratee_id on shop_to_seeker is the seeker
+    seeker_profile = SeekerProfile.query.filter_by(user_id=shop_to_seeker.ratee_id).first()
+    if seeker_profile:
+        all_seeker_ratings = Rating.query.filter_by(
+            ratee_id=shop_to_seeker.ratee_id,
+            direction="shop_to_seeker",
+            revealed=True
+        ).all()
+        if all_seeker_ratings:
+            stars_list = [r.stars for r in all_seeker_ratings]
+            seeker_profile.rating_avg = round(sum(stars_list) / len(stars_list), 1)
+        completed_apps = Application.query.filter_by(seeker_id=seeker_profile.user_id, status="completed").count()
+        seeker_profile.jobs_completed = max(seeker_profile.jobs_completed, completed_apps)
+
+    db.session.commit()
+    return True
 
 def check_and_auto_hide_job(job_id):
     """
@@ -83,7 +81,7 @@ def check_and_auto_hide_job(job_id):
     it is automatically hidden from seeker listings until reviewed by an admin.
     """
     from app.models import Job, Report
-    job = Job.query.get(job_id)
+    job = db.session.get(Job, job_id)
     if not job:
         return False
 
