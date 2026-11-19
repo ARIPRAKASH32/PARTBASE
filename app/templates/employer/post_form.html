@@ -1,150 +1,167 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container py-3">
-  <h3 class="fw-bold mb-3">Post a job in 30 seconds</h3>
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-1 text-white">Post Shift in 30 Seconds</h3>
+      <p class="text-muted small mb-0">Publish today, tomorrow, or weekend needs to nearby verified helpers.</p>
+    </div>
+    <span class="badge-chennai">Zero Merchant Commission</span>
+  </div>
 
-  <div class="row">
+  <div class="row g-4">
     <!-- Left 3-Step Form -->
-    <div class="col-lg-7 mb-4">
-      <div class="lv-card p-4">
+    <div class="col-lg-7">
+      <div class="lv-card p-4 p-md-5">
         <form method="POST" action="{{ url_for('employer.post_job') }}" class="prevent-double-submit" id="post-job-form">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
           <!-- Step 1: What do you need? -->
           <div class="mb-4">
-            <h5 class="fw-bold text-primary mb-3">1 · What do you need?</h5>
+            <h5 class="fw-bold text-primary mb-3">
+              <span class="badge bg-primary me-2">1</span> Role &amp; Title
+            </h5>
 
             <div class="mb-3">
-              <label class="form-label small fw-semibold text-muted">Category</label>
+              <label class="form-label small fw-semibold text-muted">Role Category</label>
               <select name="category" id="job-category" class="form-select">
-                <option value="shop_helper" {% if prefill.get('category') == 'shop_helper' %}selected{% endif %}>Shop helper</option>
-                <option value="delivery" {% if prefill.get('category') == 'delivery' %}selected{% endif %}>Delivery</option>
-                <option value="event_staff" {% if prefill.get('category') == 'event_staff' %}selected{% endif %}>Event staff</option>
+                <option value="shop_helper" {% if prefill.get('category') == 'shop_helper' %}selected{% endif %}>Shop Helper</option>
+                <option value="delivery" {% if prefill.get('category') == 'delivery' %}selected{% endif %}>Local Delivery</option>
+                <option value="event_staff" {% if prefill.get('category') == 'event_staff' %}selected{% endif %}>Event Staff</option>
                 <option value="tutoring" {% if prefill.get('category') == 'tutoring' %}selected{% endif %}>Tutoring</option>
-                <option value="data_entry" {% if prefill.get('category') == 'data_entry' %}selected{% endif %}>Data entry</option>
-                <option value="packing" {% if prefill.get('category') == 'packing' %}selected{% endif %}>Packing</option>
+                <option value="data_entry" {% if prefill.get('category') == 'data_entry' %}selected{% endif %}>Data Entry</option>
+                <option value="packing" {% if prefill.get('category') == 'packing' %}selected{% endif %}>Store Packing</option>
               </select>
             </div>
 
             <div class="mb-3">
-              <label class="form-label small fw-semibold text-muted">Short title</label>
-              <input type="text" name="title" id="job-title" value="{{ prefill.get('title', 'Helper for shop counter') }}" class="form-control" placeholder="e.g. Helper for shop counter" required>
+              <label class="form-label small fw-semibold text-muted">Listing Title</label>
+              <input type="text" name="title" id="job-title" value="{{ prefill.get('title', 'Helper for shop counter') }}" class="form-control" placeholder="e.g. Counter sales & billing helper" required>
             </div>
           </div>
 
-          <hr class="text-muted">
+          <div class="jp-card-divider my-4"></div>
 
           <!-- Step 2: When and how much? -->
           <div class="mb-4">
-            <h5 class="fw-bold text-primary mb-3">2 · When and how much?</h5>
+            <h5 class="fw-bold text-primary mb-3">
+              <span class="badge bg-primary me-2">2</span> Timing &amp; Payout
+            </h5>
 
             <div class="mb-3">
-              <label class="form-label small fw-semibold text-muted d-block">Day</label>
-              <div class="btn-group w-100" role="group">
+              <label class="form-label small fw-semibold text-muted d-block">Shift Day</label>
+              <div class="d-flex gap-2">
                 <input type="radio" class="btn-check" name="day_option" id="day_today" value="today" {% if prefill.get('day_option', 'today') == 'today' %}checked{% endif %}>
-                <label class="btn btn-outline-secondary" for="day_today">Today</label>
+                <label class="btn btn-sm btn-lv-outline flex-fill" for="day_today">Today</label>
 
                 <input type="radio" class="btn-check" name="day_option" id="day_tomorrow" value="tomorrow" {% if prefill.get('day_option') == 'tomorrow' %}checked{% endif %}>
-                <label class="btn btn-outline-secondary" for="day_tomorrow">Tomorrow</label>
+                <label class="btn btn-sm btn-lv-outline flex-fill" for="day_tomorrow">Tomorrow</label>
 
                 <input type="radio" class="btn-check" name="day_option" id="day_weekend" value="weekend" {% if prefill.get('day_option') == 'weekend' %}checked{% endif %}>
-                <label class="btn btn-outline-secondary" for="day_weekend">This weekend</label>
+                <label class="btn btn-sm btn-lv-outline flex-fill" for="day_weekend">Weekend</label>
               </div>
             </div>
 
-            <div class="row g-2 mb-3">
+            <div class="row g-3 mb-3">
               <div class="col-md-5">
-                <label class="form-label small fw-semibold text-muted">Time</label>
+                <label class="form-label small fw-semibold text-muted">Working Hours</label>
                 <input type="text" name="time_range" id="job-time" value="{{ prefill.get('time_range', '5:00 pm to 9:00 pm') }}" class="form-control" placeholder="e.g. 5:00 pm to 9:00 pm" required>
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-semibold text-muted">Pay amount</label>
+                <label class="form-label small fw-semibold text-muted">Direct Pay</label>
                 <div class="input-group">
-                  <span class="input-group-text">₹</span>
+                  <span class="input-group-text font-monospace">₹</span>
                   <input type="number" name="pay_amount" id="job-pay" value="{{ prefill.get('pay_amount', 120) }}" class="form-control" min="50" required>
                 </div>
               </div>
               <div class="col-md-3">
-                <label class="form-label small fw-semibold text-muted">Pay type</label>
+                <label class="form-label small fw-semibold text-muted">Frequency</label>
                 <select name="pay_type" id="job-pay-type" class="form-select">
                   <option value="hour" {% if prefill.get('pay_type', 'hour') == 'hour' %}selected{% endif %}>per hour</option>
-                  <option value="day" {% if prefill.get('pay_type') == 'day' %}selected{% endif %}>per day</option>
+                  <option value="day" {% if prefill.get('pay_type', 'day') == 'day' %}selected{% endif %}>per day</option>
                 </select>
               </div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label small fw-semibold text-muted">People needed</label>
+              <label class="form-label small fw-semibold text-muted">Helpers Needed</label>
               <input type="number" name="people_needed" id="job-people" value="{{ prefill.get('people_needed', 2) }}" class="form-control" min="1" max="50" required>
             </div>
           </div>
 
-          <hr class="text-muted">
+          <div class="jp-card-divider my-4"></div>
 
           <!-- Step 3: Where is the work? -->
           <div class="mb-4">
-            <h5 class="fw-bold text-primary mb-3">3 · Where is the work?</h5>
+            <h5 class="fw-bold text-primary mb-3">
+              <span class="badge bg-primary me-2">3</span> Work Location
+            </h5>
 
             <div class="mb-3">
               <div class="d-flex justify-content-between align-items-center mb-1">
-                <label class="form-label small fw-semibold text-muted mb-0">Address</label>
-                <button type="button" class="btn btn-link p-0 small text-decoration-none" id="btn-use-shop-address" data-address="{{ shop.shop_name }}, {{ shop.address }}">
-                  Use my shop address
+                <label class="form-label small fw-semibold text-muted mb-0">Shop Address</label>
+                <button type="button" class="btn btn-link p-0 small jp-cta-link" id="btn-use-shop-address" data-address="{{ shop.shop_name }}, {{ shop.address }}">
+                  Use shop address
                 </button>
               </div>
               <input type="text" name="address" id="job-address" value="{{ prefill.get('address', shop.shop_name ~ ', ' ~ shop.address) }}" class="form-control" required>
             </div>
 
             <div class="mb-3">
-              <label class="form-label small fw-semibold text-muted">Details (optional)</label>
-              <textarea name="details" id="job-details" class="form-control {% if blocked %}is-invalid{% endif %}" rows="3" placeholder="e.g. Light counter and stitching help. Bring your own lunch.">{{ prefill.get('details', '') }}</textarea>
+              <label class="form-label small fw-semibold text-muted">Additional Instructions (Optional)</label>
+              <textarea name="details" id="job-details" class="form-control {% if blocked %}is-invalid{% endif %}" rows="3" placeholder="e.g. Counter customer support, folding clothes. Bring your own water bottle.">{{ prefill.get('details', '') }}</textarea>
               <div class="invalid-feedback fw-bold">
-                This looks like a fee request. Jobs that ask for money are not allowed on PARTBASE. Please remove it.
+                Fee or deposit mentioned. Jobs asking for advance or fees are strictly prohibited.
               </div>
             </div>
           </div>
 
           <!-- Publish Button -->
-          <button type="submit" id="btn-publish-job" class="btn {% if blocked %}btn-secondary{% else %}btn-lv-primary{% endif %} w-100 py-2 fs-6 fw-bold" {% if blocked %}disabled{% endif %}>
-            {% if blocked %}Publish (locked){% else %}Publish job{% endif %}
+          <button type="submit" id="btn-publish-job" class="btn {% if blocked %}btn-secondary{% else %}btn-lv-primary{% endif %} w-100 py-3 fs-6 fw-bold" {% if blocked %}disabled{% endif %}>
+            {% if blocked %}Publish (Locked by Scam Policy){% else %}Publish Shift in Chennai Feed <i class="bi bi-arrow-right ms-1"></i>{% endif %}
           </button>
         </form>
       </div>
     </div>
 
-    <!-- Right Live Preview & Scam Check Column -->
+    <!-- Right Live Preview Column -->
     <div class="col-lg-5">
-      <div class="sticky-top" style="top: 1rem;">
-        <!-- Live Preview Card -->
-        <label class="form-label fw-bold small text-muted text-uppercase mb-2">Live preview</label>
-        <div class="preview-card mb-3">
+      <div class="sticky-top" style="top: 1.5rem;">
+        <label class="small fw-bold text-muted text-uppercase mb-2" style="letter-spacing: 0.5px;">Live Seeker View Preview</label>
+        
+        <div class="jp-job-card mb-3">
           <div class="d-flex justify-content-between align-items-start mb-2">
             <div>
-              <h5 class="fw-bold text-dark mb-0" id="prev-title">Helper for shop counter</h5>
+              <h5 class="fw-bold text-white mb-1" id="prev-title">Helper for shop counter</h5>
               <span class="text-muted small" id="prev-people">2 needed</span>
             </div>
             <div class="text-end">
-              <span class="fs-4 fw-bold text-primary" id="prev-pay">₹120/hr</span>
+              <span class="pay-amount" id="prev-pay">₹120/hr</span>
             </div>
           </div>
-          <div class="text-muted small" id="prev-time">Today 5:00 pm to 9:00 pm</div>
-          <div class="text-muted small" id="prev-address">{{ shop.shop_name }}, {{ shop.address }}</div>
+          <div class="text-muted small mb-1" id="prev-time"><i class="bi bi-clock me-1"></i>Today 5:00 pm to 9:00 pm</div>
+          <div class="text-muted small" id="prev-address"><i class="bi bi-geo-alt me-1"></i>{{ shop.shop_name }}, {{ shop.address }}</div>
         </div>
 
         <!-- Live Safety Check Banner -->
         <div id="scam-safety-status" class="alert {% if blocked %}alert-danger{% else %}alert-success{% endif %} mb-3">
           {% if blocked %}
-            <strong>Safety check: blocked.</strong> Remove the fee or advance to publish.
+            <i class="bi bi-shield-x me-1"></i><strong>Safety check: blocked.</strong> Remove the fee or deposit to publish.
           {% else %}
-            <strong>Safety check passed.</strong> No fee or advance mentioned.
+            <i class="bi bi-shield-check me-1"></i><strong>Safety check passed.</strong> Zero fees policy respected.
           {% endif %}
         </div>
 
         <!-- Boost Hint Card -->
-        <div class="alert alert-warning py-3 px-3 small border-0" style="background-color: #FEF3C7; color: #92400E;">
-          <i class="bi bi-lightning-charge-fill text-warning me-1"></i>
-          <strong>Want more applicants?</strong> You can boost the job for ₹49 <em>after</em> it is live.
+        <div class="lv-card p-3" style="background: rgba(255, 109, 0, 0.08); border: 1px solid rgba(255, 109, 0, 0.3);">
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <i class="bi bi-lightning-charge-fill text-warning fs-5"></i>
+            <strong class="text-white small">Instant ₹49 Boost Available</strong>
+          </div>
+          <p class="text-muted small mb-0">
+            Pin your job to the top of the feed across Chennai clusters for 24 hours.
+          </p>
         </div>
       </div>
     </div>
