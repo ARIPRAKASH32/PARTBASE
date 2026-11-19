@@ -1,23 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container py-4">
+<div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-lg-6">
-      {% set rating_title = "Rate " ~ (seeker.name or 'Worker') %}
-      {% set rating_subtitle = "Her/his work today" %}
+      {% set rating_title = "Rate Performance: " ~ (seeker.name or 'Helper') %}
+      {% set rating_subtitle = "How was their shift completion today?" %}
       {% set submit_url = url_for('employer.rate_worker', app_id=application.id) %}
-      {% set positive_tags = ['On time', 'Hard working', 'Polite'] %}
-      {% set red_tags = ['No show', 'Late', 'Rude'] %}
+      {% set positive_tags = ['Punctual on time', 'Diligent worker', 'Polite & helpful', 'Followed instructions'] %}
+      {% set red_tags = ['No show / absent', 'Arrived late', 'Left shift early', 'Rude behavior'] %}
       {% include 'components/_rating_form.html' %}
 
-      <div class="text-center mt-3">
-        <a href="{{ url_for('employer.post_job', copy_from=job.id) }}" class="text-primary text-decoration-none small fw-semibold me-3">
-          Post this job again
+      <div class="text-center mt-4">
+        <a href="{{ url_for('employer.post_job', copy_from=job.id) }}" class="jp-cta-link small me-3">
+          <i class="bi bi-arrow-repeat me-1"></i> Post Similar Shift Again
         </a>
-        ·
-        <a href="{{ url_for('support.support') }}" class="text-danger text-decoration-none small fw-semibold ms-3">
-          Report a problem
+        <span class="text-white-50">·</span>
+        <a href="{{ url_for('support.support') }}" class="small text-danger text-decoration-none fw-semibold ms-3">
+          <i class="bi bi-flag me-1"></i> Report an Incident
         </a>
       </div>
     </div>
