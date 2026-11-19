@@ -119,7 +119,7 @@
 
           <!-- Publish Button -->
           <button type="submit" id="btn-publish-job" class="btn {% if blocked %}btn-secondary{% else %}btn-lv-primary{% endif %} w-100 py-3 fs-6 fw-bold" {% if blocked %}disabled{% endif %}>
-            {% if blocked %}Publish (Locked by Scam Policy){% else %}Publish Shift in Chennai Feed <i class="bi bi-arrow-right ms-1"></i>{% endif %}
+            {% if blocked %}Publish (Locked: Deposit/Fee Detected){% else %}Publish Shift in Chennai Feed <i class="bi bi-arrow-right ms-1"></i>{% endif %}
           </button>
         </form>
       </div>
@@ -147,9 +147,9 @@
         <!-- Live Safety Check Banner -->
         <div id="scam-safety-status" class="alert {% if blocked %}alert-danger{% else %}alert-success{% endif %} mb-3">
           {% if blocked %}
-            <i class="bi bi-shield-x me-1"></i><strong>Safety check: blocked.</strong> Remove the fee or deposit to publish.
+            <i class="bi bi-shield-x me-1"></i><strong>Policy check: blocked.</strong> Remove advance fee or deposit to publish.
           {% else %}
-            <i class="bi bi-shield-check me-1"></i><strong>Safety check passed.</strong> Zero fees policy respected.
+            <i class="bi bi-shield-check me-1"></i><strong>Policy check passed.</strong> Zero fees policy respected.
           {% endif %}
         </div>
 

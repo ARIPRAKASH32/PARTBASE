@@ -420,6 +420,13 @@ def seed_database():
             Report(job_id=job6.id, reporter_id=user_priya.id, reason="fake_shop", details="No physical shop at address.", ticket_id=t1.id)
         ])
 
+        # Reports on Job 7 (Data entry, home - Hidden)
+        db.session.add_all([
+            Report(job_id=job7.id, reporter_id=user_priya.id, reason="asked_money", details="Employer asked for Rs 300 advance deposit via GPay before sharing work."),
+            Report(job_id=job7.id, reporter_id=user_arun.id, reason="asked_money", details="Asked for upfront registration fee to join."),
+            Report(job_id=job7.id, reporter_id=user_divya.id, reason="fake_shop", details="Address given in Neelankarai is a vacant plot.")
+        ])
+
         # Ticket T-2: Fake applicant on Packing (Anand)
         t2 = Ticket(
             raised_by_id=user_anand.id,
