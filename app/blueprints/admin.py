@@ -15,7 +15,7 @@ def admin_required(f):
             return redirect(url_for("admin.login"))
         if session.get("is_admin"):
             return f(*args, **kwargs)
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         is_admin_phone = user and (user.phone in current_app.config.get("ADMIN_PHONES", []))
         if not user or not (user.is_admin or is_admin_phone):
             return redirect(url_for("admin.access_denied"))
@@ -57,7 +57,7 @@ def verify():
 
         res = OTPService.verify_otp(phone, code)
         if res["ok"]:
-            user = User.query.get(res["user_id"])
+            user = db.session.get(User, res["user_id"])
             user.is_admin = True
             db.session.commit()
 
@@ -87,7 +87,7 @@ def reports():
 def review_job(job_id):
     job = Job.query.get_or_404(job_id)
     reports = Report.query.filter_by(job_id=job.id).order_by(Report.created_at.desc()).all()
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
 
     if request.method == "POST":
         action = request.form.get("action")  # 'delete', 'dismiss', 'warn'
@@ -149,7 +149,7 @@ def support():
         query = query.filter(Ticket.status != "resolved")
 
     tickets = query.order_by(Ticket.created_at.desc()).all()
-    selected_ticket = Ticket.query.get(selected_id) if selected_id else (tickets[0] if tickets else None)
+    selected_ticket = db.session.get(Ticket, selected_id) if selected_id else (tickets[0] if tickets else None)
 
     return render_template(
         "admin/support.html",
@@ -172,7 +172,7 @@ def reply_ticket(ticket_id):
     else:
         ticket.status = "in_review"
 
-    admin_user = User.query.get(session["user_id"])
+    admin_user = db.session.get(User, session["user_id"])
     log = AuditLog(
         admin_id=admin_user.id,
         action="reply_ticket",
@@ -198,7 +198,7 @@ def employers():
 def verify_employer(shop_id):
     shop = Shop.query.get_or_404(shop_id)
     action = request.form.get("action")  # approve | reject | ask_info
-    admin_user = User.query.get(session["user_id"])
+    admin_user = db.session.get(User, session["user_id"])
 
     if action == "approve":
         shop.verification_status = "verified"

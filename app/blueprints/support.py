@@ -7,7 +7,7 @@ support_bp = Blueprint("support", __name__)
 @support_bp.route("/support", methods=["GET", "POST"])
 def support():
     user_id = session.get("user_id")
-    user = User.query.get(user_id) if user_id else None
+    user = db.session.get(User, user_id) if user_id else None
     current_role = session.get("role", user.active_role if user else "seeker")
 
     if request.method == "POST":
@@ -59,7 +59,7 @@ def profile():
     if not user_id:
         return redirect(url_for("auth.login"))
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     areas = Area.query.order_by(Area.name).all()
     role = session.get("role", user.active_role or "seeker")
 
@@ -73,7 +73,7 @@ def profile():
             user.name = name
             if area_id:
                 user.area_id = area_id
-                area = Area.query.get(area_id)
+                area = db.session.get(Area, area_id)
                 if area:
                     user.lat = area.lat
                     user.lng = area.lng
@@ -112,7 +112,7 @@ def switch_role():
     if not user_id:
         return redirect(url_for("auth.login"))
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     current_role = session.get("role", user.active_role or "seeker")
     new_role = "employer" if current_role == "seeker" else "seeker"
 

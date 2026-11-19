@@ -124,7 +124,7 @@ def verify():
                 flash(res["message"], "danger")
                 return render_template("auth/verify.html", phone=phone, role=role)
 
-        user = User.query.get(res["user_id"])
+        user = db.session.get(User, res["user_id"])
         session["user_id"] = user.id
         session["phone"] = user.phone
         session["is_admin"] = user.is_admin or (user.phone in current_app.config.get("ADMIN_PHONES", []))

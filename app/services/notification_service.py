@@ -21,6 +21,7 @@ class NotificationService:
     @staticmethod
     def notify_reporters_job_removed(job_id, reason="Safety policy violation"):
         from app.models import Report, Ticket
+        from app.extensions import db
         reports = Report.query.filter_by(job_id=job_id).all()
         for r in reports:
             logger.info(
@@ -28,7 +29,8 @@ class NotificationService:
                 f"The job you reported has been removed by our moderation team. Reason: {reason}."
             )
             if r.ticket_id:
-                ticket = Ticket.query.get(r.ticket_id)
+                ticket = db.session.get(Ticket, r.ticket_id)
                 if ticket:
                     ticket.status = "resolved"
                     ticket.admin_reply = f"Thank you for reporting. This job was investigated and removed: {reason}."
+        db.session.commit()
