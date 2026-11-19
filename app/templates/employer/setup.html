@@ -4,37 +4,41 @@
 <div class="container py-4">
   <div class="row min-vh-75 align-items-center justify-content-center">
     <div class="col-lg-5 mb-4 mb-lg-0 text-center text-lg-start">
-      <h1 class="hero-title mb-3">Hire helpers.<br>Today.</h1>
-      <p class="hero-subtitle mb-4">Hyper-local micro-jobs for Chennai</p>
+      <div class="d-inline-flex align-items-center gap-2 mb-2">
+        <span class="live-indicator"></span>
+        <span class="badge-chennai">Merchant Onboarding</span>
+      </div>
+      <h1 class="hero-title mb-3">Hire Local Helpers.<br><span class="text-gradient">Ready Within 1 Hour.</span></h1>
+      <p class="hero-subtitle mb-4">Set up your store profile once. Post short shifts whenever you need counter help, packing, or delivery.</p>
       {% include 'components/_safety_banner.html' %}
     </div>
 
     <div class="col-lg-6">
       <div class="lv-card p-4 p-md-5">
-        <h3 class="fw-bold mb-1">Set up your shop</h3>
-        <p class="text-muted small mb-4">Seekers see this before they apply.</p>
+        <h3 class="fw-bold mb-1 text-white">Merchant Store Setup</h3>
+        <p class="text-muted small mb-4">Job seekers see your store name and verified location before applying.</p>
 
         <form method="POST" action="{{ url_for('employer.setup') }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-          <div class="mb-3">
-            <label class="form-label fw-semibold">Shop name</label>
-            <input type="text" name="shop_name" value="{{ user.shop.shop_name if user.shop else '' }}" class="form-control form-control-lg fs-6" placeholder="e.g. Sri Murugan Tailors" required>
+          <div class="mb-4">
+            <label class="form-label small fw-semibold">Store / Shop Name</label>
+            <input type="text" name="shop_name" value="{{ user.shop.shop_name if user.shop else '' }}" class="form-control" placeholder="e.g. Sri Murugan Provisions &amp; Supermarket" required>
           </div>
 
-          <div class="mb-3">
-            <label class="form-label fw-semibold">Your name</label>
-            <input type="text" name="owner_name" value="{{ user.shop.owner_name if user.shop else (user.name or '') }}" class="form-control form-control-lg fs-6" placeholder="e.g. Murugan" required>
+          <div class="mb-4">
+            <label class="form-label small fw-semibold">Proprietor / Owner Name</label>
+            <input type="text" name="owner_name" value="{{ user.shop.owner_name if user.shop else (user.name or '') }}" class="form-control" placeholder="e.g. K. Murugan" required>
           </div>
 
-          <div class="mb-3">
-            <label class="form-label fw-semibold">Shop address</label>
-            <textarea name="address" class="form-control fs-6" rows="2" placeholder="e.g. No. 12, OMR Main Road, Thoraipakkam, Chennai" required>{{ user.shop.address if user.shop else '' }}</textarea>
+          <div class="mb-4">
+            <label class="form-label small fw-semibold">Store Address</label>
+            <textarea name="address" class="form-control" rows="2" placeholder="e.g. No. 12, OMR Main Road, Thoraipakkam, Chennai" required>{{ user.shop.address if user.shop else '' }}</textarea>
           </div>
 
-          <div class="mb-3">
-            <label class="form-label fw-semibold">Area</label>
-            <select name="area_id" class="form-select fs-6" required>
+          <div class="mb-4">
+            <label class="form-label small fw-semibold">Locality / Cluster</label>
+            <select name="area_id" class="form-select" required>
               <option value="" disabled {% if not user.area_id %}selected{% endif %}>Select shop area</option>
               {% for a in areas %}
                 <option value="{{ a.id }}" {% if user.shop and user.shop.area_id == a.id %}selected{% endif %}>
@@ -45,18 +49,18 @@
           </div>
 
           <div class="mb-4">
-            <label class="form-label fw-semibold">Verified badge (optional)</label>
+            <label class="form-label small fw-semibold">Merchant Verification Proof (Optional)</label>
             <div class="input-group">
-              <span class="input-group-text bg-light"><i class="bi bi-patch-check text-primary"></i></span>
-              <input type="text" name="proof_value" value="{{ user.shop.proof_value if user.shop else '' }}" class="form-control fs-6" placeholder="Add shop photo or Google Maps link">
+              <span class="input-group-text"><i class="bi bi-patch-check text-primary"></i></span>
+              <input type="text" name="proof_value" value="{{ user.shop.proof_value if user.shop else '' }}" class="form-control" placeholder="Add shop Google Maps link or photo URL">
             </div>
-            <div class="form-text small text-muted mt-1">
-              Without it, the first post is checked by our team before it shows.
+            <div class="form-text small text-muted mt-2">
+              Verified merchants receive the green check badge and 3x more applications.
             </div>
           </div>
 
-          <button type="submit" class="btn btn-lv-primary w-100 py-2 fs-6 fw-bold">
-            Save and continue
+          <button type="submit" class="btn btn-lv-primary w-100 py-3 fs-6 fw-bold">
+            Complete Shop Setup &amp; Post First Shift <i class="bi bi-arrow-right ms-1"></i>
           </button>
         </form>
       </div>
