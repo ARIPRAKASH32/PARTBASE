@@ -90,6 +90,20 @@ def create_app(config_class=Config):
             return {"ok": False, "error": "Server Error", "message": "An internal server error occurred."}, 500
         return render_template("errors/500.html"), 500
 
+    # Custom CLI commands for operational maintenance
+    @app.cli.command("seed-data")
+    def seed_data_command():
+        """Seed the database with Chennai pilot data."""
+        import seed
+        seed.seed_database()
+        print("Database successfully seeded with Chennai pilot data.")
+
+    @app.cli.command("init-db")
+    def init_db_command():
+        """Initialize database tables."""
+        db.create_all()
+        print("Database tables initialized.")
+
     # Initialize tables automatically for SQLite / local development
     with app.app_context():
         try:
