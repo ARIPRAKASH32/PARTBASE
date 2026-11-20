@@ -75,6 +75,35 @@ def setup():
 
     return render_template("employer/setup.html", user=user, areas=areas)
 
+@employer_bp.route("/dashboard")
+def dashboard():
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect(url_for("auth.demo_login", role="employer"))
+    user = db.session.get(User, user_id)
+    if not user.shop:
+        return redirect(url_for("employer.setup"))
+
+    shop = user.shop
+    all_jobs = Job.query.filter_by(shop_id=shop.id).order_by(Job.created_at.desc()).all()
+    active_jobs = [j for j in all_jobs if j.status == 'open']
+    job_ids = [j.id for j in all_jobs]
+    all_applications = Application.query.filter(Application.job_id.in_(job_ids)).order_by(Application.applied_at.desc()).all() if job_ids else []
+    pending_applicants = [a for a in all_applications if a.status == 'applied']
+    hired_candidates = [a for a in all_applications if a.status == 'hired']
+    total_views = sum(j.view_count for j in all_jobs)
+
+    return render_template(
+        "employer/dashboard.html",
+        shop=shop,
+        all_jobs=all_jobs,
+        active_jobs=active_jobs,
+        all_applications=all_applications,
+        pending_applicants=pending_applicants,
+        hired_candidates=hired_candidates,
+        total_views=total_views
+    )
+
 @employer_bp.route("/posts")
 def posts():
     user_id = session.get("user_id")
@@ -130,6 +159,7 @@ def post_job():
         time_range = request.form.get("time_range", "5:00 pm to 9:00 pm").strip()
         pay_amount = request.form.get("pay_amount", 100, type=int)
         pay_type = request.form.get("pay_type", "hour")
+        hours_per_shift = request.form.get("hours_per_shift", 4, type=int)
         people_needed = request.form.get("people_needed", 1, type=int)
         address = request.form.get("address", shop.address).strip()
         details = request.form.get("details", "").strip()
@@ -151,6 +181,7 @@ def post_job():
             time_range=time_range,
             pay_amount=pay_amount,
             pay_type=pay_type,
+            hours_per_shift=hours_per_shift,
             people_needed=people_needed,
             address=address,
             details=details,

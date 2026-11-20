@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Merchant Header -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <h2 class="fw-bold mb-0 text-white">{{ shop.shop_name }}</h2>
+        {% if shop.is_verified %}
+          <span class="jp-badge-verified"><i class="bi bi-patch-check-fill me-1"></i>Verified Merchant</span>
+        {% else %}
+          <span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25 px-2 py-1">
+            <i class="bi bi-clock me-1"></i>Verification In Review
+          </span>
+        {% endif %}
+      </div>
+      <p class="text-muted small mb-0">
+        <i class="bi bi-shop text-primary me-1"></i>
+        {{ shop.owner_name }} · {{ shop.address }} · Chennai Employer Command Center
+      </p>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <a href="{{ url_for('employer.posts') }}" class="btn btn-sm btn-lv-outline">
+        <i class="bi bi-list-task me-1"></i> All Postings
+      </a>
+      <a href="{{ url_for('employer.post_job') }}" class="btn btn-sm btn-lv-primary">
+        <i class="bi bi-plus-circle me-1"></i> Post New Shift
+      </a>
+    </div>
+  </div>
+
+  <!-- Top 4 Quick KPI Summary Cards -->
+  <div class="row g-3 mb-4">
+    <!-- Card 1: Active Shifts -->
+    <div class="col-6 col-lg-3">
+      <div class="admin-kpi-card" style="border-top: 3px solid #0561E2;">
+        <div class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.8px; font-size: 0.72rem;">Active Shifts</div>
+        <div class="stat-number text-primary mt-1" style="font-size: 2rem;">
+          {{ active_jobs|length }}
+        </div>
+        <div class="small text-muted mt-1"><i class="bi bi-broadcast text-primary me-1"></i>Live in Chennai feed</div>
+      </div>
+    </div>
+
+    <!-- Card 2: Pending Applicants -->
+    <div class="col-6 col-lg-3">
+      <div class="admin-kpi-card" style="border-top: 3px solid #FF9900;">
+        <div class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.8px; font-size: 0.72rem;">Pending Applicants</div>
+        <div class="stat-number text-warning mt-1" style="font-size: 2rem;">
+          {{ pending_applicants|length }}
+        </div>
+        <div class="small text-muted mt-1"><i class="bi bi-person-exclamation text-warning me-1"></i>Awaiting store review</div>
+      </div>
+    </div>
+
+    <!-- Card 3: Hired Workers -->
+    <div class="col-6 col-lg-3">
+      <div class="admin-kpi-card" style="border-top: 3px solid #00E676;">
+        <div class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.8px; font-size: 0.72rem;">Hired Helpers</div>
+        <div class="stat-number text-success mt-1" style="font-size: 2rem;">
+          {{ hired_candidates|length }}
+        </div>
+        <div class="small text-muted mt-1"><i class="bi bi-check2-circle text-success me-1"></i>Assigned to shifts</div>
+      </div>
+    </div>
+
+    <!-- Card 4: Store Views -->
+    <div class="col-6 col-lg-3">
+      <div class="admin-kpi-card" style="border-top: 3px solid #00E5FF;">
+        <div class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.8px; font-size: 0.72rem;">Shift Views</div>
+        <div class="stat-number text-info mt-1" style="font-size: 2rem;">
+          {{ total_views }}
+        </div>
+        <div class="small text-muted mt-1"><i class="bi bi-eye text-info me-1"></i>Seeker impressions</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Left Column: Active Shifts with Clear Hours & Wage Breakdown -->
+    <div class="col-lg-7">
+      <div class="lv-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold text-white mb-0">Active Shift Listings ({{ active_jobs|length }})</h5>
+          <a href="{{ url_for('employer.post_job') }}" class="jp-cta-link small">
+            <i class="bi bi-plus me-1"></i> Create listing
+          </a>
+        </div>
+
+        {% if active_jobs %}
+          <div class="d-flex flex-column gap-3">
+            {% for job in active_jobs %}
+              <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--jp-border-card);">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <h6 class="fw-bold text-white mb-1">{{ job.title }}</h6>
+                    <span class="text-muted small">
+                      <i class="bi bi-clock me-1 text-info"></i>{{ job.time_range or 'Today' }}
+                      · <i class="bi bi-people me-1 text-primary"></i>{{ job.hired_count }}/{{ job.people_needed }} Hired
+                    </span>
+                  </div>
+                  <div class="text-end">
+                    <span class="badge bg-primary bg-opacity-25 text-info px-2 py-1 rounded" style="font-size: 0.75rem;">
+                      {{ job.hours_per_shift or 4 }} Hours
+                    </span>
+                    <div class="fw-bold text-success mt-1">
+                      ₹{{ job.effective_hourly_pay }}/hr
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Rate Breakdown Banner -->
+                <div class="p-2 rounded mb-3 d-flex justify-content-between align-items-center" style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.78rem;">
+                  <span class="text-white-50">Total Budget: <strong class="text-white">₹{{ job.total_shift_pay }}</strong> for {{ job.hours_per_shift or 4 }} hrs</span>
+                  <span class="text-muted">Applications: <strong class="text-white">{{ job.applications|length }}</strong></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                  <a href="{{ url_for('employer.job_detail', job_id=job.id) }}" class="btn btn-sm btn-lv-primary flex-grow-1">
+                    Manage Applicants ({{ job.applications|length }})
+                  </a>
+                  {% if not job.is_currently_boosted %}
+                    <a href="{{ url_for('employer.boost_job', job_id=job.id) }}" class="btn btn-sm btn-lv-outline text-warning border-warning">
+                      ⚡ ₹49 Boost
+                    </a>
+                  {% else %}
+                    <span class="badge bg-warning bg-opacity-25 text-warning border border-warning px-2 d-inline-flex align-items-center">
+                      <i class="bi bi-lightning-fill me-1"></i> Boosted
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-plus-circle fs-2 mb-2 d-block opacity-50"></i>
+            <p class="small mb-3">No active shifts right now. Post a 4-hour or full-day helper shift.</p>
+            <a href="{{ url_for('employer.post_job') }}" class="btn btn-sm btn-lv-primary">
+              Post Your First Store Shift
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Right Column: Recent Applicants -->
+    <div class="col-lg-5">
+      <div class="lv-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold text-white mb-0">Recent Applicants</h5>
+          <span class="badge bg-warning bg-opacity-25 text-warning">{{ pending_applicants|length }} New</span>
+        </div>
+
+        {% if all_applications %}
+          <div class="d-flex flex-column gap-3">
+            {% for app_item in all_applications[:5] %}
+              <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--jp-border-card);">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <h6 class="fw-bold text-white mb-0">{{ app_item.seeker.name if app_item.seeker else 'Applicant' }}</h6>
+                    <span class="text-muted small">
+                      For: <strong class="text-white-50">{{ app_item.job.title if app_item.job else 'Shift' }}</strong>
+                    </span>
+                  </div>
+                  <span class="badge {% if app_item.status == 'hired' %}bg-success{% elif app_item.status == 'shortlisted' %}bg-info{% else %}bg-secondary{% endif %} bg-opacity-25 text-white border px-2 py-1">
+                    {{ app_item.status | title }}
+                  </span>
+                </div>
+
+                {% if app_item.seeker and app_item.seeker.seeker_profile %}
+                  <div class="small text-muted mb-2">
+                    <span class="text-white">{{ app_item.seeker.seeker_profile.experience_years or 0 }} yrs exp</span> ·
+                    Available {{ app_item.seeker.seeker_profile.hours_per_day or 4 }} hrs/day
+                  </div>
+                {% endif %}
+
+                <a href="{{ url_for('employer.applicant_detail', app_id=app_item.id) }}" class="btn btn-sm btn-lv-outline w-100 py-1">
+                  View Profile &amp; Contact
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-people fs-2 mb-2 d-block opacity-50"></i>
+            <p class="small mb-0">Applicants will appear here once you post shifts.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

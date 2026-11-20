@@ -191,7 +191,12 @@ def seed_database():
             interests="shop_helper,packing",
             free_slots="weekday_evening,weekend",
             rating_avg=4.8,
-            jobs_completed=3
+            jobs_completed=3,
+            experience_years=1.5,
+            experience_summary="1.5 years experience helping at local tailoring & clothing stores. Good with customer greetings and sorting orders.",
+            skills="Customer Support, Garment Folding, Cash Handling",
+            education_level="B.Com 2nd Year Student",
+            hours_per_day=4
         )
         db.session.add(profile_priya)
 
@@ -213,7 +218,12 @@ def seed_database():
             interests="tutoring,delivery",
             free_slots="weekend",
             rating_avg=4.5,
-            jobs_completed=1
+            jobs_completed=1,
+            experience_years=2.0,
+            experience_summary="Experienced in local package delivery and 10th standard maths tutoring.",
+            skills="Bike Driving, Route Navigation, Maths Tutoring",
+            education_level="B.Sc Mathematics",
+            hours_per_day=5
         )
         db.session.add(profile_arun)
 
@@ -235,7 +245,12 @@ def seed_database():
             interests="shop_helper,data_entry",
             free_slots="anytime",
             rating_avg=4.7,
-            jobs_completed=2
+            jobs_completed=2,
+            experience_years=1.0,
+            experience_summary="Fast English & Tamil typing (45 WPM). Familiar with Excel data entry.",
+            skills="MS Excel, Fast Typing, Bill Entry",
+            education_level="Diploma in Computer Applications",
+            hours_per_day=6
         )
         db.session.add(profile_divya)
 
@@ -251,6 +266,7 @@ def seed_database():
             time_range="5:00 pm to 9:00 pm",
             pay_amount=120,
             pay_type="hour",
+            hours_per_shift=4,
             people_needed=2,
             hired_count=1,
             details="Light counter and stitching help. Bring your own lunch.",
@@ -265,9 +281,10 @@ def seed_database():
             category="packing",
             title="Packing helper",
             day_option="today",
-            time_range="Full day",
+            time_range="10:00 am to 4:00 pm (6 hrs)",
             pay_amount=600,
             pay_type="day",
+            hours_per_shift=6,
             people_needed=2,
             hired_count=2,
             details="Packing grocery bags and sorting orders for fast dispatch.",
@@ -287,6 +304,7 @@ def seed_database():
             time_range="4:00 pm to 8:00 pm",
             pay_amount=100,
             pay_type="hour",
+            hours_per_shift=4,
             people_needed=1,
             hired_count=0,
             details="Assist with customer gift wrapping and counter billing.",

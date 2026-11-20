@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid px-lg-5 py-4">
+
+  <!-- Admin Header -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <h2 class="fw-bold mb-0 text-white">Platform Admin Command Center</h2>
+        <span class="badge bg-danger bg-opacity-25 text-danger border border-danger px-2 py-1">Super Admin</span>
+      </div>
+      <p class="text-muted small mb-0">Chennai Pilot Clusters · Zero-Fee Integrity &amp; Community Oversight</p>
+    </div>
+
+    <!-- Quick Navigation to Full Queues -->
+    <div class="d-flex align-items-center gap-2">
+      <a href="{{ url_for('admin.reports') }}" class="btn btn-sm btn-lv-outline text-danger border-danger">
+        <i class="bi bi-shield-exclamation me-1"></i> Reports Queue ({{ reported_jobs_count }})
+      </a>
+      <a href="{{ url_for('admin.employers') }}" class="btn btn-sm btn-lv-outline text-warning border-warning">
+        <i class="bi bi-shop me-1"></i> Verifications ({{ pending_shops_count }})
+      </a>
+      <a href="{{ url_for('admin.support') }}" class="btn btn-sm btn-lv-primary">
+        <i class="bi bi-headset me-1"></i> Support Desk ({{ open_tickets_count }})
+      </a>
+    </div>
+  </div>
+
+  <!-- Top 4 Master KPI Summary Cards -->
+  <div class="row g-3 mb-4">
+    <!-- Card 1: Flagged Reports -->
+    <div class="col-6 col-lg-3">
+      <div class="admin-kpi-card" style="border-top: 3px solid #FF334B;">
+        <div class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.8px; font-size: 0.72rem;">Flagged Incidents</div>
+        <div class="stat-number text-danger mt-1" style="font-size: 2rem;">
+          {{ reported_jobs_count }}
+        </div>
+        <div class="small text-muted mt-1"><i class="bi bi-exclamation-triangle text-danger me-1"></i>Zero-fee policy checks</div>
+      </div>
+    </div>
+
+    <!-- Card 2: Pending Store Verifications -->
+    <div class="col-6 col-lg-3">
+      <div class="admin-kpi-card" style="border-top: 3px solid #FF9900;">
+        <div class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.8px; font-size: 0.72rem;">Pending Merchant KYC</div>
+        <div class="stat-number text-warning mt-1" style="font-size: 2rem;">
+          {{ pending_shops_count }}
+        </div>
+        <div class="small text-muted mt-1"><i class="bi bi-shop-window text-warning me-1"></i>Awaiting location review</div>
+      </div>
+    </div>
+
+    <!-- Card 3: Support Grievances -->
+    <div class="col-6 col-lg-3">
+      <div class="admin-kpi-card" style="border-top: 3px solid #00E5FF;">
+        <div class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.8px; font-size: 0.72rem;">Open Support Tickets</div>
+        <div class="stat-number text-info mt-1" style="font-size: 2rem;">
+          {{ open_tickets_count }}
+        </div>
+        <div class="small text-muted mt-1"><i class="bi bi-headset text-info me-1"></i>Active seeker &amp; shop tickets</div>
+      </div>
+    </div>
+
+    <!-- Card 4: Platform Health -->
+    <div class="col-6 col-lg-3">
+      <div class="admin-kpi-card" style="border-top: 3px solid #00E676;">
+        <div class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.8px; font-size: 0.72rem;">Zero-Fee Health</div>
+        <div class="stat-number text-success mt-1 d-flex align-items-center gap-2" style="font-size: 1.8rem;">
+          <span class="live-indicator"></span> 100%
+        </div>
+        <div class="small text-muted mt-1"><i class="bi bi-shield-check text-success me-1"></i>Active across all clusters</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Left Column: Flagged Jobs Requiring Moderation -->
+    <div class="col-lg-6">
+      <div class="lv-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold text-white mb-0">Flagged Jobs (Top Queue)</h5>
+          <a href="{{ url_for('admin.reports') }}" class="jp-cta-link small">Full Queue &rarr;</a>
+        </div>
+
+        {% if recent_flagged_jobs %}
+          <div class="d-flex flex-column gap-3">
+            {% for job in recent_flagged_jobs %}
+              <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--jp-border-card);">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <h6 class="fw-bold text-white mb-1">{{ job.title }}</h6>
+                    <span class="text-muted small">
+                      <i class="bi bi-shop me-1 text-primary"></i>
+                      {{ job.shop.shop_name if job.shop else 'Store' }} ({{ job.shop.owner_name }})
+                    </span>
+                  </div>
+                  <span class="badge bg-danger bg-opacity-25 text-danger border border-danger px-2 py-1">
+                    <i class="bi bi-flag-fill me-1"></i> {{ job.report_count }} Reports
+                  </span>
+                </div>
+
+                <div class="p-2 rounded mb-3 small" style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 51, 75, 0.2);">
+                  <strong class="text-danger">Flag Reason:</strong>
+                  <span class="text-white-50 ms-1">
+                    {{ job.reports[0].details if job.reports else 'Flagged for zero-fee compliance review.' }}
+                  </span>
+                </div>
+
+                <a href="{{ url_for('admin.review_job', job_id=job.id) }}" class="btn btn-sm btn-lv-primary w-100 py-1">
+                  Investigate &amp; Decide <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-shield-check text-success fs-2 mb-2 d-block"></i>
+            <p class="small mb-0">No active flags. Zero-fee guidelines fully respected!</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Right Column: Pending Verifications & Grievances -->
+    <div class="col-lg-6">
+      <!-- Section 1: Pending Shop KYC -->
+      <div class="lv-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold text-white mb-0">Pending Shop KYC ({{ pending_shops_count }})</h5>
+          <a href="{{ url_for('admin.employers') }}" class="jp-cta-link small">View all &rarr;</a>
+        </div>
+
+        {% if pending_shops %}
+          <div class="d-flex flex-column gap-2">
+            {% for shop_item in pending_shops %}
+              <div class="p-3 rounded-3 d-flex justify-content-between align-items-center" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--jp-border-card);">
+                <div>
+                  <h6 class="fw-bold text-white mb-0">{{ shop_item.shop_name }}</h6>
+                  <span class="text-muted small">
+                    {{ shop_item.owner_name }} · {{ shop_item.area.name if shop_item.area else 'Chennai' }}
+                  </span>
+                </div>
+                <a href="{{ url_for('admin.employers') }}" class="btn btn-sm btn-lv-outline">
+                  Verify Shop
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="small text-muted mb-0">All registered shops are verified.</p>
+        {% endif %}
+      </div>
+
+      <!-- Section 2: Recent Support Grievances -->
+      <div class="lv-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold text-white mb-0">Active Support Tickets ({{ open_tickets_count }})</h5>
+          <a href="{{ url_for('admin.support') }}" class="jp-cta-link small">Support Desk &rarr;</a>
+        </div>
+
+        {% if recent_tickets %}
+          <div class="d-flex flex-column gap-2">
+            {% for t in recent_tickets %}
+              <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--jp-border-card);">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="fw-bold text-white small font-monospace">{{ t.ticket_code }}</span>
+                  <span class="badge bg-warning bg-opacity-25 text-warning">{{ t.issue_type.replace('_', ' ').title() }}</span>
+                </div>
+                <p class="text-white-50 small mb-2 text-truncate">{{ t.description }}</p>
+                <a href="{{ url_for('admin.admin_support') }}?ticket_id={{ t.id }}" class="btn btn-sm btn-lv-outline py-1">
+                  Reply &amp; Resolve
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="small text-muted mb-0">No open tickets. Support inbox is clear!</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

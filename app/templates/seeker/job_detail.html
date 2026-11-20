@@ -33,12 +33,46 @@
           </a>
         </div>
 
-        <div class="my-4 p-3 rounded-4" style="background: rgba(5, 97, 226, 0.08); border: 1px solid rgba(5, 97, 226, 0.25);">
-          <div class="small text-muted text-uppercase mb-1" style="letter-spacing: 0.5px;">Agreed Compensation</div>
-          <div class="jp-pay-rate">
-            <span class="jp-currency">₹</span>{{ job.pay_amount }}<span class="jp-pay-cycle">/{{ job.pay_type }}</span>
+        <!-- JD Compensation & Hours-wise Breakdown Card -->
+        <div class="my-4 p-4 rounded-4" style="background: rgba(5, 97, 226, 0.08); border: 1px solid rgba(5, 97, 226, 0.25);">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <div>
+              <span class="small text-muted text-uppercase d-block" style="letter-spacing: 0.8px; font-size: 0.72rem;">Shift Work &amp; Compensation</span>
+              <div class="jp-pay-rate mt-1">
+                <span class="jp-currency">₹</span>{{ job.pay_amount }}<span class="jp-pay-cycle">/{{ job.pay_type }}</span>
+              </div>
+            </div>
+            <span class="badge bg-primary bg-opacity-25 text-info border border-info border-opacity-25 px-3 py-2 rounded-pill fs-6">
+              <i class="bi bi-clock-history me-1"></i>{{ job.hours_per_shift or 4 }} Hours Shift
+            </span>
           </div>
-          <div class="small text-success mt-1"><i class="bi bi-shield-check me-1"></i>Direct payment from merchant after shift</div>
+
+          <!-- Clear Hours-Wise Money Grid -->
+          <div class="row g-2 pt-2 border-top border-secondary border-opacity-25">
+            <div class="col-sm-4">
+              <div class="p-2 rounded" style="background: rgba(0, 0, 0, 0.25);">
+                <span class="text-muted d-block small" style="font-size: 0.72rem;">HOURLY RATE</span>
+                <strong class="text-white fs-6">₹{{ job.effective_hourly_pay }} / hr</strong>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="p-2 rounded" style="background: rgba(0, 0, 0, 0.25);">
+                <span class="text-muted d-block small" style="font-size: 0.72rem;">SHIFT DURATION</span>
+                <strong class="text-info fs-6">{{ job.hours_per_shift or 4 }} Hours</strong>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="p-2 rounded" style="background: rgba(0, 230, 118, 0.1); border: 1px solid rgba(0, 230, 118, 0.25);">
+                <span class="text-success d-block small" style="font-size: 0.72rem;">TOTAL PAYOUT</span>
+                <strong class="text-success fs-6">₹{{ job.total_shift_pay }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="small text-success mt-3 d-flex align-items-center gap-1">
+            <i class="bi bi-shield-check fs-6"></i>
+            <span>Direct cash/UPI payment after shift. Zero candidate fees deducted.</span>
+          </div>
         </div>
 
         <div class="jp-card-divider my-4"></div>

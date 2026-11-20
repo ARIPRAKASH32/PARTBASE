@@ -75,6 +75,31 @@ def verify():
 def access_denied():
     return render_template("admin/denied.html")
 
+@admin_bp.route("/dashboard")
+@admin_required
+def dashboard():
+    reported_jobs_count = Job.query.filter(Job.report_count > 0, Job.status != "deleted").count()
+    pending_shops_count = Shop.query.filter_by(verification_status="pending").count()
+    open_tickets_count = Ticket.query.filter_by(status="open").count()
+    total_jobs = Job.query.count()
+    total_users = User.query.count()
+
+    recent_flagged_jobs = Job.query.filter(Job.report_count > 0, Job.status != "deleted").order_by(Job.report_count.desc()).limit(3).all()
+    pending_shops = Shop.query.filter_by(verification_status="pending").order_by(Shop.id.desc()).limit(3).all()
+    recent_tickets = Ticket.query.filter_by(status="open").order_by(Ticket.created_at.desc()).limit(3).all()
+
+    return render_template(
+        "admin/dashboard.html",
+        reported_jobs_count=reported_jobs_count,
+        pending_shops_count=pending_shops_count,
+        open_tickets_count=open_tickets_count,
+        total_jobs=total_jobs,
+        total_users=total_users,
+        recent_flagged_jobs=recent_flagged_jobs,
+        pending_shops=pending_shops,
+        recent_tickets=recent_tickets
+    )
+
 @admin_bp.route("/reports")
 @admin_required
 def reports():

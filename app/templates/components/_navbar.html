@@ -10,17 +10,20 @@
     <ul class="jp-nav-items">
       {% if current_user %}
         {% if session.get('is_admin') %}
-          <li class="jp-nav-item"><a href="{{ url_for('admin.reports') }}"><i class="bi bi-shield-exclamation text-danger me-1"></i> Reports Queue</a></li>
+          <li class="jp-nav-item"><a href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a></li>
+          <li class="jp-nav-item"><a href="{{ url_for('admin.reports') }}"><i class="bi bi-shield-exclamation text-danger me-1"></i> Reports</a></li>
           <li class="jp-nav-item"><a href="{{ url_for('admin.employers') }}"><i class="bi bi-shop text-warning me-1"></i> Verifications</a></li>
-          <li class="jp-nav-item"><a href="{{ url_for('admin.support') }}"><i class="bi bi-headset text-info me-1"></i> Support Inbox</a></li>
+          <li class="jp-nav-item"><a href="{{ url_for('admin.support') }}"><i class="bi bi-headset text-info me-1"></i> Support</a></li>
         {% elif active_role == 'seeker' %}
+          <li class="jp-nav-item"><a href="{{ url_for('seeker.dashboard') }}"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a></li>
           <li class="jp-nav-item"><a href="{{ url_for('seeker.jobs') }}">Find Jobs</a></li>
-          <li class="jp-nav-item"><a href="{{ url_for('seeker.applications') }}">My Applications</a></li>
-          <li class="jp-nav-item"><a href="{{ url_for('seeker.map_helper') }}" target="_blank">Live Map</a></li>
+          <li class="jp-nav-item"><a href="{{ url_for('seeker.experience') }}">Experience</a></li>
+          <li class="jp-nav-item"><a href="{{ url_for('seeker.applications') }}">Applications</a></li>
           <li class="jp-nav-item"><a href="{{ url_for('support.support') }}">Support</a></li>
         {% else %}
-          <li class="jp-nav-item"><a href="{{ url_for('employer.posts') }}">My Postings</a></li>
-          <li class="jp-nav-item"><a href="{{ url_for('employer.post_job') }}">Post a Job</a></li>
+          <li class="jp-nav-item"><a href="{{ url_for('employer.dashboard') }}"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a></li>
+          <li class="jp-nav-item"><a href="{{ url_for('employer.posts') }}">My Shifts</a></li>
+          <li class="jp-nav-item"><a href="{{ url_for('employer.post_job') }}"><i class="bi bi-plus-circle me-1"></i> Post Shift</a></li>
           <li class="jp-nav-item"><a href="{{ url_for('support.support') }}">Support</a></li>
         {% endif %}
       {% else %}
