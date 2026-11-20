@@ -50,4 +50,24 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
+
+  // PWA Service Worker Registration
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/static/sw.js').catch(function () {
+        // Silently handle if offline or unsupported
+      });
+    });
+  }
+
+  // Keyboard shortcut: Press '/' to focus search input if available
+  document.addEventListener('keydown', function (e) {
+    if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+      const searchInput = document.querySelector('input[type="search"], input[name="q"], #job-search');
+      if (searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+      }
+    }
+  });
 });
