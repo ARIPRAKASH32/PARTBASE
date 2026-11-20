@@ -16,3 +16,10 @@ def test_format_currency_hour():
 
 def test_format_currency_day():
     assert format_currency(600, "day") == "₹600/day"
+
+def test_format_inr():
+    from app.utils.helpers import format_inr
+    assert format_inr(500) == "₹500"
+    assert format_inr(1000) == "₹1,000"
+    assert format_inr(150000) == "₹1,50,000"
+    assert format_inr(None) == "₹0"
