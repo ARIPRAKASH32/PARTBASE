@@ -65,6 +65,12 @@ def create_app(config_class=Config):
                 flash("Your account has been suspended for safety violations. Please contact support.", "danger")
                 return redirect(url_for("auth.login"))
 
+    @app.after_request
+    def add_security_headers(response):
+        if request.path.startswith("/static/"):
+            response.headers["Cache-Control"] = "public, max-age=86400"
+        return response
+
     # Error handlers
     @app.errorhandler(404)
     def page_not_found(e):
