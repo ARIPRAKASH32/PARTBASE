@@ -72,6 +72,18 @@ def create_app(config_class=Config):
             return {"ok": False, "error": "Not Found", "message": "The requested API endpoint was not found."}, 404
         return render_template("errors/404.html"), 404
 
+    @app.errorhandler(403)
+    def forbidden(e):
+        if request.path.startswith("/api/"):
+            return {"ok": False, "error": "Forbidden", "message": "Access restricted."}, 403
+        return render_template("errors/403.html"), 403
+
+    @app.errorhandler(400)
+    def bad_request(e):
+        if request.path.startswith("/api/"):
+            return {"ok": False, "error": "Bad Request", "message": "Invalid request payload."}, 400
+        return render_template("errors/400.html"), 400
+
     @app.errorhandler(500)
     def internal_server_error(e):
         if request.path.startswith("/api/"):
