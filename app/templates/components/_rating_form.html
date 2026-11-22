@@ -1,6 +1,6 @@
-<div class="lv-card p-4 mx-auto" style="max-width: 540px;">
-  <h4 class="fw-bold text-center mb-1">{{ rating_title or 'Job done!' }}</h4>
-  <p class="text-muted text-center mb-3">{{ rating_subtitle or 'How was the experience?' }}</p>
+<div class="lv-card p-4 p-md-5 mx-auto" style="max-width: 540px;">
+  <h4 class="fw-bold text-center text-white mb-1">{{ rating_title or 'Shift Completed!' }}</h4>
+  <p class="text-muted text-center small mb-4">{{ rating_subtitle or 'How was the work experience?' }}</p>
 
   <form method="POST" action="{{ submit_url }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -8,7 +8,7 @@
 
     <!-- 5 Star Selection -->
     <div class="text-center mb-4">
-      <div class="star-rating justify-content-center">
+      <div class="star-rating justify-content-center d-flex gap-2 fs-2 cursor-pointer text-warning">
         <span class="star active" data-value="1">★</span>
         <span class="star active" data-value="2">★</span>
         <span class="star active" data-value="3">★</span>
@@ -18,12 +18,12 @@
     </div>
 
     <!-- Positive Tags -->
-    <div class="mb-3">
-      <label class="form-label fw-bold small text-muted">WHAT WENT WELL</label>
-      <div class="tag-btn-group">
+    <div class="mb-4">
+      <label class="small fw-bold text-muted text-uppercase d-block mb-2" style="letter-spacing: 0.5px;">Highlights</label>
+      <div class="d-flex flex-wrap gap-2">
         {% for tag in positive_tags %}
-          <label class="tag-btn">
-            <input type="checkbox" name="positive_tags" value="{{ tag }}" class="d-none">
+          <label class="jp-chip cursor-pointer">
+            <input type="checkbox" name="positive_tags" value="{{ tag }}" class="form-check-input mt-0 me-2">
             {{ tag }}
           </label>
         {% endfor %}
@@ -31,12 +31,12 @@
     </div>
 
     <!-- Red Tags -->
-    <div class="mb-3">
-      <label class="form-label fw-bold small text-muted">SOMETHING WRONG? (OPTIONAL)</label>
-      <div class="tag-btn-group">
+    <div class="mb-4">
+      <label class="small fw-bold text-danger text-uppercase d-block mb-2" style="letter-spacing: 0.5px;">Report Any Issues (Optional)</label>
+      <div class="d-flex flex-wrap gap-2">
         {% for tag in red_tags %}
-          <label class="tag-btn tag-btn-red">
-            <input type="checkbox" name="red_tags" value="{{ tag }}" class="d-none">
+          <label class="jp-chip cursor-pointer" style="border-color: rgba(255, 51, 75, 0.3); color: #FF667A;">
+            <input type="checkbox" name="red_tags" value="{{ tag }}" class="form-check-input mt-0 me-2">
             {{ tag }}
           </label>
         {% endfor %}
@@ -45,15 +45,17 @@
 
     <!-- Comment -->
     <div class="mb-4">
-      <label class="form-label fw-semibold small">Comment (optional)</label>
-      <textarea name="comment" rows="2" class="form-control" placeholder="Say a few words..."></textarea>
+      <label class="form-label fw-semibold small">Feedback Comment (Optional)</label>
+      <textarea name="comment" rows="2" class="form-control" placeholder="Share quick details about the work environment..."></textarea>
     </div>
 
-    <button type="submit" class="btn btn-lv-primary w-100 py-2 fw-bold">Submit rating</button>
+    <button type="submit" class="btn btn-lv-primary w-100 py-2 fs-6 fw-bold">
+      Submit Rating &amp; Review
+    </button>
 
     <div class="text-center mt-3 text-muted small">
-      Ratings show after both sides rate · Picking a red tag also offers
-      <a href="{{ url_for('support.support') }}" class="text-danger fw-semibold">Report a problem</a>
+      Ratings are revealed once both parties submit · Need support?
+      <a href="{{ url_for('support.support') }}" class="text-danger fw-semibold">Report an Issue</a>
     </div>
   </form>
 </div>

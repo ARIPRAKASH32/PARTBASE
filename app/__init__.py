@@ -42,7 +42,7 @@ def create_app(config_class=Config):
         user = None
         user_id = session.get("user_id")
         if user_id:
-            user = User.query.get(user_id)
+            user = db.session.get(User, user_id)
         areas = Area.query.order_by(Area.name).all() if db.engine else []
         return {
             "current_user": user,
@@ -59,11 +59,17 @@ def create_app(config_class=Config):
         user_id = session.get("user_id")
         if user_id:
             from app.models import User
-            user = User.query.get(user_id)
+            user = db.session.get(User, user_id)
             if user and user.is_blocked:
                 session.clear()
                 flash("Your account has been suspended for safety violations. Please contact support.", "danger")
                 return redirect(url_for("auth.login"))
+
+    @app.after_request
+    def add_security_headers(response):
+        if request.path.startswith("/static/"):
+            response.headers["Cache-Control"] = "public, max-age=86400"
+        return response
 
     # Error handlers
     @app.errorhandler(404)
@@ -72,11 +78,37 @@ def create_app(config_class=Config):
             return {"ok": False, "error": "Not Found", "message": "The requested API endpoint was not found."}, 404
         return render_template("errors/404.html"), 404
 
+    @app.errorhandler(403)
+    def forbidden(e):
+        if request.path.startswith("/api/"):
+            return {"ok": False, "error": "Forbidden", "message": "Access restricted."}, 403
+        return render_template("errors/403.html"), 403
+
+    @app.errorhandler(400)
+    def bad_request(e):
+        if request.path.startswith("/api/"):
+            return {"ok": False, "error": "Bad Request", "message": "Invalid request payload."}, 400
+        return render_template("errors/400.html"), 400
+
     @app.errorhandler(500)
     def internal_server_error(e):
         if request.path.startswith("/api/"):
             return {"ok": False, "error": "Server Error", "message": "An internal server error occurred."}, 500
         return render_template("errors/500.html"), 500
+
+    # Custom CLI commands for operational maintenance
+    @app.cli.command("seed-data")
+    def seed_data_command():
+        """Seed the database with Chennai pilot data."""
+        import seed
+        seed.seed_database()
+        print("Database successfully seeded with Chennai pilot data.")
+
+    @app.cli.command("init-db")
+    def init_db_command():
+        """Initialize database tables."""
+        db.create_all()
+        print("Database tables initialized.")
 
     # Initialize tables automatically for SQLite / local development
     with app.app_context():

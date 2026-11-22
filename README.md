@@ -1,6 +1,6 @@
 # PARTBASE — Hyper-local Micro-job Platform for Chennai
 
-> Connecting neighborhood shops with nearby students and homemakers in Chennai (pilot: **OMR** and **Anna Nagar**) for same-day, flexible micro-jobs.
+> Connecting neighborhood shops with nearby students and homemakers in Chennai (covering **OMR** and **Anna Nagar**) for same-day, flexible micro-jobs.
 
 [![Flask](https://img.shields.io/badge/Flask-3.1-blue.svg)](https://flask.palletsprojects.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -8,7 +8,13 @@
 
 ---
 
-## 1. Product Summary & Core Principles
+## 1. Contributors & Maintainers
+- **Owner & Core Dev:** [dhatcha2006-arch](https://github.com/dhatcha2006-arch) (`dhatcha2006@gmail.com`)
+- **Collaborator & Lead Contributor:** [ARIPRAKASH32](https://github.com/ARIPRAKASH32) (`ariprakash32@gmail.com`)
+
+---
+
+## 2. Product Summary & Core Principles
 
 - **No Passwords & No Email:** Mobile number + 6-digit OTP only (seekers, employers, admins).
 - **Truly Local:** Seekers see jobs within 1–3 km only (Haversine distance calculation on stored coordinates).

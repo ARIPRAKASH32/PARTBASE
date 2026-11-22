@@ -1,530 +1,1179 @@
-/* PARTBASE Modern SaaS Design System */
+/* ==========================================================================
+   PARTBASE - 100% COMPLETE JUSPAY.IO ARCHITECTURE SYSTEM
+   Obsidian Black Canvas, Electric Blue Accents, Cyber Grids, Sleek Tabs,
+   Glassmorphic Interactive Modules, Complete Form System
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
 :root {
-  --lv-navy: #1B3A6B;
-  --lv-navy-dark: #12284b;
-  --lv-teal: #1A9A8F;
-  --lv-teal-dark: #13776f;
-  --lv-bg: #EAF4FA;
-  --lv-card-bg: #FFFFFF;
-  --lv-border: #DDE8F0;
-  --lv-text-main: #1D2D44;
-  --lv-text-muted: #64748B;
-  --lv-urgent: #FD7E14;
-  --lv-urgent-bg: #FFEAD8;
-  --lv-verified: #198754;
-  --lv-verified-bg: #D1E7DD;
-  --lv-radius: 12px;
-  --lv-shadow: 0 4px 14px rgba(27, 58, 107, 0.07);
+  /* Juspay Exact Palette */
+  --jp-page-bg: #0C0D0E;
+  --jp-nav-bg: #121316;
+  --jp-card-bg: #17191B;
+  --jp-card-sub: #1C1E21;
+  --jp-border-dark: #211F1F;
+  --jp-border-card: #23262F;
+  --jp-border-light: #333536;
+
+  /* Juspay Brand Accents */
+  --jp-blue: #0561E2;
+  --jp-blue-hover: #0099FF;
+  --jp-blue-glow: rgba(5, 97, 226, 0.35);
+  --jp-green: #00E676;
+  --jp-orange: #FF6D00;
+  --jp-red: #FF334B;
+  --jp-gray-text: #B1B0B6;
+  --jp-gray-subtext: #777E90;
+  --jp-white: #FFFFFF;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 body {
-  background-color: var(--lv-bg);
-  color: var(--lv-text-main);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--jp-page-bg) !important;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(5, 97, 226, 0.12) 0%, transparent 60%),
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px) !important;
+  background-size: 100% 100%, 40px 40px, 40px 40px !important;
+  background-attachment: fixed !important;
+  color: var(--jp-gray-text) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 15px;
+  line-height: 1.6;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  -webkit-font-smoothing: antialiased;
 }
 
 main {
   flex: 1 0 auto;
 }
 
-/* Navbar */
-.lv-navbar {
-  background-color: var(--lv-navy);
-  padding: 0.75rem 1rem;
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  color: var(--jp-white) !important;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
-.lv-logo {
-  font-weight: 700;
-  font-size: 1.25rem;
-  color: #FFFFFF !important;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+a {
+  color: var(--jp-blue-hover);
   text-decoration: none;
+  transition: all 0.2s ease;
 }
 
-.lv-logo-badge {
-  background-color: #2D5899;
-  color: #FFFFFF;
-  font-size: 0.85rem;
-  font-weight: 800;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  letter-spacing: 0.5px;
+a:hover {
+  color: var(--jp-blue);
 }
 
-.lv-nav-link {
-  color: rgba(255, 255, 255, 0.85) !important;
-  font-weight: 500;
-  padding: 0.5rem 0.85rem !important;
-  border-radius: 6px;
-  transition: all 0.15s ease-in-out;
+.text-dark {
+  color: var(--jp-white) !important;
 }
 
-.lv-nav-link:hover, .lv-nav-link.active {
-  color: #FFFFFF !important;
-  background-color: rgba(255, 255, 255, 0.12);
+.text-muted {
+  color: var(--jp-gray-subtext) !important;
 }
 
-/* Safety Banner */
-.lv-safety-banner {
-  background-color: #FFF3CD;
-  border: 1px solid #FFE69C;
-  color: #664D03;
-  padding: 0.65rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  border-radius: var(--lv-radius);
-  margin-bottom: 1rem;
+.bg-light, .bg-white {
+  background-color: var(--jp-card-bg) !important;
+  color: var(--jp-white) !important;
+}
+
+/* ==========================================================================
+   JUSPAY INTERACTIVE MULTI-LEVEL PILL NAVBAR
+   ========================================================================== */
+.jp-nav-wrapper {
+  padding: 1.25rem 1rem 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 1040;
+}
+
+.jp-nav-pill {
+  width: 100%;
+  max-width: 1320px;
+  background: var(--jp-nav-bg);
+  border: 1.5px solid var(--jp-border-dark);
+  border-radius: 9999px;
+  padding: 0.65rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.jp-logo {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #FFFFFF !important;
+  letter-spacing: -0.03em;
 }
 
-/* Cards */
-.lv-card {
-  background: var(--lv-card-bg);
-  border-radius: var(--lv-radius);
-  border: 1px solid var(--lv-border);
-  box-shadow: var(--lv-shadow);
+.jp-logo-badge {
+  background: #2F3134;
+  color: #FFFFFF;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+}
+
+.jp-nav-items {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.jp-nav-item {
+  position: relative;
+}
+
+.jp-nav-item > a, .jp-nav-item > button {
+  color: #F4F4F4 !important;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.jp-nav-item:hover > a, .jp-nav-item:hover > button {
+  color: var(--jp-blue-hover) !important;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Juspay Mega Dropdown Menus */
+.jp-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 15px);
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: var(--jp-card-bg);
+  border: 1px solid var(--jp-border-light);
+  border-radius: 20px;
   padding: 1.25rem;
-  margin-bottom: 1rem;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  min-width: 420px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(5, 97, 226, 0.15);
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1050;
+  pointer-events: none;
 }
 
-.lv-card:hover {
-  box-shadow: 0 6px 18px rgba(27, 58, 107, 0.11);
+.jp-nav-item:hover .jp-dropdown-menu {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
 }
 
-/* Badges / Chips */
-.chip-verified {
-  background-color: var(--lv-verified-bg);
-  color: var(--lv-verified);
-  font-size: 0.75rem;
+.jp-drop-header {
+  font-size: 0.72rem;
   font-weight: 700;
-  padding: 0.2rem 0.55rem;
-  border-radius: 50px;
+  color: var(--jp-gray-subtext);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  padding-left: 0.5rem;
+}
+
+.jp-drop-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.jp-drop-item:hover {
+  background: #23272F;
+}
+
+.jp-drop-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #2F3134;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--jp-blue-hover);
+  flex-shrink: 0;
+}
+
+.jp-drop-title {
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.92rem;
+  margin-bottom: 0.15rem;
+}
+
+.jp-drop-desc {
+  color: var(--jp-gray-subtext);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.jp-cta-link {
+  color: var(--jp-blue-hover) !important;
+  font-weight: 600;
+  font-size: 0.95rem;
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
 }
 
-.chip-urgent {
-  background-color: var(--lv-urgent-bg);
-  color: #C05600;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.2rem 0.55rem;
-  border-radius: 50px;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
+.jp-cta-link:hover {
+  color: var(--jp-blue) !important;
+  transform: translateX(2px);
 }
 
-.chip-status {
-  font-size: 0.75rem;
+/* ==========================================================================
+   BUTTONS (JUSPAY EXACT ROUNDED PILLS)
+   ========================================================================== */
+.btn {
+  font-family: var(--font-sans);
   font-weight: 600;
-  padding: 0.2rem 0.6rem;
-  border-radius: 50px;
-}
-
-.chip-status-open {
-  background-color: #E0F2FE;
-  color: #0369A1;
-}
-
-.chip-status-closed {
-  background-color: #F1F5F9;
-  color: #64748B;
-}
-
-.chip-status-hired {
-  background-color: #DCFCE7;
-  color: #15803D;
-}
-
-.chip-status-shortlisted {
-  background-color: #FEF9C3;
-  color: #854D0E;
-}
-
-.chip-status-hidden {
-  background-color: #FEE2E2;
-  color: #B91C1C;
-}
-
-.chip-pilot {
-  background-color: #FEF3C7;
-  color: #92400E;
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 0.25rem 0.75rem;
-  border-radius: 50px;
-  display: inline-block;
-}
-
-/* Buttons (min 44px tap targets) */
-.btn-lv-primary {
-  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
-  border: 1px solid #1D4ED8;
-  color: #FFFFFF !important;
-  font-weight: 600;
+  border-radius: 9999px !important;
+  padding: 0.6rem 1.6rem;
   min-height: 44px;
-  padding: 0.5rem 1.25rem;
-  border-radius: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  cursor: pointer;
+  white-space: nowrap !important;
+  transition: all 0.2s ease;
 }
 
-.btn-lv-primary:hover {
-  background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%);
-  border-color: #1E40AF;
+.btn-lv-primary, .btn-primary {
+  background: var(--jp-blue) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 20px rgba(5, 97, 226, 0.4) !important;
+}
+
+.btn-lv-primary:hover, .btn-primary:hover {
+  background: #044ebb !important;
+  box-shadow: 0 0 30px rgba(5, 97, 226, 0.6) !important;
+  transform: translateY(-1.5px);
+  color: #FFFFFF !important;
+}
+
+.btn-lv-outline, .btn-outline-secondary, .btn-outline-primary {
+  background: transparent !important;
+  border: 1px solid var(--jp-border-light) !important;
+  color: #FFFFFF !important;
+}
+
+.btn-lv-outline:hover, .btn-outline-secondary:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
   color: #FFFFFF !important;
   transform: translateY(-1.5px);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.32);
 }
 
-.btn-lv-primary:active {
-  transform: translateY(0);
+.btn-lv-success, .btn-success {
+  background: var(--jp-green) !important;
+  color: #0C0D0E !important;
+  font-weight: 700;
+  box-shadow: 0 0 20px rgba(0, 230, 118, 0.35) !important;
 }
 
-.btn-lv-teal {
-  background-color: var(--lv-teal);
-  border-color: var(--lv-teal);
-  color: #FFFFFF;
-  font-weight: 600;
-  min-height: 44px;
-  padding: 0.5rem 1.25rem;
-  border-radius: 8px;
-}
-
-.btn-lv-teal:hover {
-  background-color: var(--lv-teal-dark);
-  border-color: var(--lv-teal-dark);
-  color: #FFFFFF;
-}
-
-.btn-lv-success {
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-  border: 1px solid #059669;
-  color: #FFFFFF !important;
-  font-weight: 600;
-  min-height: 44px;
-  padding: 0.5rem 1.25rem;
-  border-radius: 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.22);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-lv-success:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  border-color: #047857;
-  color: #FFFFFF !important;
+.btn-lv-success:hover, .btn-success:hover {
+  background: #00C853 !important;
   transform: translateY(-1.5px);
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.32);
 }
 
-.btn-lv-success:active {
-  transform: translateY(0);
+.btn-danger, .btn-outline-danger {
+  border-radius: 9999px !important;
 }
 
-.btn-lv-outline {
-  background-color: #FFFFFF;
-  border: 1px solid #CBD5E1;
-  color: var(--lv-text-main);
+/* ==========================================================================
+   CARDS, TABLES & DASHBOARDS
+   ========================================================================== */
+.lv-card, .card {
+  background: var(--jp-card-bg) !important;
+  border: 1px solid var(--jp-border-light) !important;
+  border-radius: 20px !important;
+  padding: 1.6rem;
+  margin-bottom: 1.25rem;
+  color: var(--jp-gray-text) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  transition: all 0.2s ease;
+}
+
+.lv-card:hover, .card:hover {
+  border-color: rgba(5, 97, 226, 0.4) !important;
+}
+
+/* Table styling for admin / review */
+.table {
+  color: var(--jp-gray-text) !important;
+  border-color: var(--jp-border-card) !important;
+}
+
+.table th {
+  background-color: var(--jp-card-sub) !important;
+  color: #FFFFFF !important;
+  border-color: var(--jp-border-card) !important;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.table td {
+  background-color: var(--jp-card-bg) !important;
+  color: var(--jp-gray-text) !important;
+  border-color: var(--jp-border-card) !important;
+}
+
+/* Nav Pills inside dashboards */
+.nav-pills .nav-link {
+  color: var(--jp-gray-text) !important;
+  background: var(--jp-card-sub);
+  border: 1px solid var(--jp-border-card);
+  border-radius: 9999px;
+  padding: 0.4rem 1.2rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  min-height: 44px;
-  padding: 0.5rem 1.25rem;
-  border-radius: 8px;
+  margin-right: 0.5rem;
+  transition: all 0.2s ease;
 }
 
-.btn-lv-outline:hover {
-  background-color: #F8FAFC;
-  border-color: #94A3B8;
-  color: var(--lv-navy);
+.nav-pills .nav-link.active, .nav-pills .nav-link:hover {
+  background: var(--jp-blue) !important;
+  color: #FFFFFF !important;
+  border-color: var(--jp-blue);
 }
 
-.btn-lv-danger {
-  background-color: #DC2626;
-  border-color: #DC2626;
+/* Admin Sidebar */
+.admin-sidebar {
+  background: var(--jp-card-bg) !important;
+  border-right: 1px solid var(--jp-border-card);
+}
+
+/* Stat Box */
+.stat-box {
+  background: var(--jp-card-bg);
+  border: 1px solid var(--jp-border-card);
+  border-radius: 18px;
+  padding: 1.75rem 1.5rem;
+}
+
+.stat-number {
+  font-family: var(--font-mono);
+  font-size: 2.4rem;
+  font-weight: 800;
   color: #FFFFFF;
+  letter-spacing: -0.02em;
+}
+
+.stat-label {
+  font-size: 0.88rem;
+  color: var(--jp-gray-subtext);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   FORMS & INPUTS (DARK CYBER FINTECH STYLE)
+   ========================================================================== */
+.form-control, .form-select {
+  background-color: #121316 !important;
+  border: 1.5px solid var(--jp-border-light) !important;
+  border-radius: 12px !important;
+  color: #FFFFFF !important;
+  padding: 0.75rem 1.1rem;
+  font-size: 0.95rem;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--jp-blue) !important;
+  box-shadow: 0 0 0 3px rgba(5, 97, 226, 0.3) !important;
+  outline: none;
+}
+
+.form-label {
+  color: #D1D5DB !important;
   font-weight: 600;
-  min-height: 44px;
-  padding: 0.5rem 1.25rem;
-  border-radius: 8px;
+  font-size: 0.88rem;
+  margin-bottom: 0.5rem;
 }
 
-.btn-lv-danger:hover {
-  background-color: #B91C1C;
-  border-color: #B91C1C;
-  color: #FFFFFF;
+.input-group-text {
+  background-color: #1C1E21 !important;
+  border-color: var(--jp-border-light) !important;
+  color: var(--jp-gray-text) !important;
+  border-radius: 12px 0 0 12px !important;
 }
 
 /* OTP 6-box input */
 .otp-container {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.65rem;
   justify-content: center;
   margin: 1.5rem 0;
 }
 
 .otp-box {
-  width: 48px;
-  height: 56px;
+  width: 50px;
+  height: 60px;
   text-align: center;
-  font-size: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
   font-weight: 700;
-  border-radius: 8px;
-  border: 2px solid #CBD5E1;
-  background-color: #FFFFFF;
-  color: var(--lv-navy);
-  transition: border-color 0.15s ease-in-out;
+  border-radius: 12px;
+  border: 1.5px solid var(--jp-border-light);
+  background: #121316;
+  color: #FFFFFF;
 }
 
 .otp-box:focus {
+  border-color: var(--jp-blue-hover);
+  box-shadow: 0 0 15px rgba(0, 153, 255, 0.4);
   outline: none;
-  border-color: #2563EB;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
-/* Hero Section */
+/* Alert Boxes */
+.alert {
+  border-radius: 14px !important;
+  border: 1px solid var(--jp-border-card) !important;
+}
+
+.alert-danger {
+  background: rgba(255, 51, 75, 0.12) !important;
+  color: #FF667A !important;
+  border-color: rgba(255, 51, 75, 0.3) !important;
+}
+
+.alert-warning {
+  background: rgba(255, 109, 0, 0.12) !important;
+  color: #FFB74D !important;
+  border-color: rgba(255, 109, 0, 0.3) !important;
+}
+
+.alert-success {
+  background: rgba(0, 230, 118, 0.12) !important;
+  color: #00E676 !important;
+  border-color: rgba(0, 230, 118, 0.3) !important;
+}
+
+.alert-info {
+  background: rgba(5, 97, 226, 0.12) !important;
+  color: #60A5FA !important;
+  border-color: rgba(5, 97, 226, 0.3) !important;
+}
+
+/* ==========================================================================
+   LOGIN CARD PLANS (MULTI-ROLE TOGGLE)
+   ========================================================================== */
+.plan-toggle-group {
+  display: flex;
+  background: #121316;
+  border: 1px solid var(--jp-border-light);
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 1.75rem;
+}
+
+.plan-toggle-btn {
+  flex: 1;
+  text-align: center;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--jp-gray-subtext);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.plan-toggle-btn.active {
+  background: #23272F;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.plan-toggle-btn:hover:not(.active) {
+  color: #FFFFFF;
+}
+
+/* Modal styling */
+.modal-content {
+  background: var(--jp-card-bg) !important;
+  border: 1px solid var(--jp-border-light) !important;
+  border-radius: 20px !important;
+  color: var(--jp-gray-text) !important;
+}
+
+.modal-header, .modal-footer {
+  border-color: var(--jp-border-card) !important;
+}
+
+.btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* ==========================================================================
+   EXTRA UTILITIES (BADGES, STATS, CHIPS, FOOTER)
+   ========================================================================== */
+.badge-chennai {
+  background: #1F2228;
+  color: var(--jp-blue-hover);
+  border: 1px solid var(--jp-border-card);
+  font-weight: 600;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  padding: 0.3em 0.8em;
+}
+
+.jp-tag {
+  display: inline-block;
+  background: #1C1E21;
+  color: #FFFFFF;
+  border: 1px solid var(--jp-border-light);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+}
+
 .hero-title {
-  font-size: 2.75rem;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
   font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.03em;
   line-height: 1.15;
-  color: var(--lv-navy);
 }
 
 .hero-subtitle {
-  font-size: 1.15rem;
-  color: var(--lv-text-muted);
-  line-height: 1.5;
+  font-size: 1.1rem;
+  color: var(--jp-gray-text);
+  line-height: 1.6;
 }
 
-/* Star Rating */
-.star-rating {
-  display: flex;
-  gap: 0.5rem;
-  font-size: 2rem;
-  cursor: pointer;
-  color: #CBD5E1;
+.text-gradient {
+  background: linear-gradient(135deg, #FFFFFF 0%, #B1B0B6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.star-rating .star.active {
-  color: #F59E0B;
-}
-
-/* Tag Selectors */
-.tag-btn-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.tag-btn {
-  background: #F1F5F9;
-  border: 1px solid #CBD5E1;
-  border-radius: 50px;
-  padding: 0.35rem 0.85rem;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  user-select: none;
-}
-
-.tag-btn.active {
-  background: #2563EB;
-  border-color: #2563EB;
-  color: #FFFFFF;
-}
-
-.tag-btn-red.active {
-  background: #DC2626;
-  border-color: #DC2626;
-  color: #FFFFFF;
-}
-
-/* Live Preview Card */
-.preview-card {
-  border: 2px dashed #93C5FD;
-  background: #F8FAFC;
-  border-radius: var(--lv-radius);
-  padding: 1rem;
-}
-
-/* Footer */
-.lv-footer {
-  background-color: #FFFFFF;
-  border-top: 1px solid var(--lv-border);
-  padding: 1.25rem 0;
-  font-size: 0.875rem;
-  color: var(--lv-text-muted);
-}
-
-.lv-footer a {
-  color: var(--lv-text-muted);
-  text-decoration: none;
-}
-
-.lv-footer a:hover {
-  color: var(--lv-navy);
-  text-decoration: underline;
-}
-
-/* Admin Sidebar */
-.admin-sidebar {
-  background: #101E33;
-  color: #FFFFFF;
-  min-height: 100vh;
-  padding: 1.5rem 1rem;
-}
-
-.admin-sidebar a {
-  color: #94A3B8;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 1rem;
-  border-radius: 8px;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-}
-
-.admin-sidebar a:hover, .admin-sidebar a.active {
-  background: #2563EB;
-  color: #FFFFFF;
-}
-
-/* Chennai Location Badge */
-.badge-chennai {
-  background-color: #F1F5F9;
-  color: #0F172A;
-  font-size: 0.85rem;
-  font-weight: 700;
-  padding: 0.35rem 0.85rem;
-  border-radius: 50px;
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid #CBD5E1;
-}
-
-
-/* Modern SaaS Micro-Interactions & Animations */
-.btn {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-.btn:active {
-  transform: scale(0.97) !important;
-}
-
-.btn-lv-primary {
-  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
-  border: 1px solid #1D4ED8 !important;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25) !important;
-}
-
-.btn-lv-primary:hover {
-  background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35) !important;
-}
-
-.btn-lv-success {
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
-  border: 1px solid #059669 !important;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25) !important;
-}
-
-.btn-lv-success:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35) !important;
-}
-
-.lv-card {
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease !important;
-}
-
-.lv-card:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.03) !important;
-  border-color: #CBD5E1 !important;
-}
-
-/* Category Cards on Landing */
-.category-card {
-  border: 1px solid #E2E8F0;
-  border-radius: 12px;
-  background: #FFFFFF;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.category-card:hover {
-  transform: translateY(-4px);
-  border-color: #2563EB;
-  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.12);
-}
-
-/* Step Badges */
-.step-icon-badge {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  font-weight: 800;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-}
-
-/* Live Pulse Dot Indicator */
 .live-indicator {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--jp-green);
+}
+
+.live-indicator::before {
+  content: '';
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #10B981;
-  box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
-  animation: pulse-dot 1.8s infinite;
+  background: var(--jp-green);
+  animation: livePulse 1.4s ease-in-out infinite;
 }
 
-@keyframes pulse-dot {
-  0% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
-  }
-  70% {
-    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-  }
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
 }
 
-/* Text Gradient */
-.text-gradient {
-  background: linear-gradient(135deg, #2563EB 0%, #06B6D4 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.trust-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--jp-card-bg);
+  border: 1px solid var(--jp-border-card);
+  border-radius: 9999px;
+  padding: 0.3rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #FFFFFF;
 }
 
-/* Enhanced Form Inputs */
-.form-control:focus, .form-select:focus {
-  border-color: #2563EB;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+.pay-amount {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--jp-blue-hover);
+  letter-spacing: -0.01em;
+  white-space: nowrap !important;
+}
+
+.btn-sm {
+  min-height: 34px !important;
+  padding: 0.35rem 1.1rem !important;
+  font-size: 0.85rem !important;
+  white-space: nowrap !important;
+}
+
+.job-card {
+  background: var(--jp-card-bg);
+  border: 1px solid var(--jp-border-light);
+  border-radius: 20px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+}
+
+.job-card:hover {
+  border-color: rgba(5, 97, 226, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.job-card.boosted {
+  border-color: rgba(5, 97, 226, 0.6);
+  background: linear-gradient(180deg, rgba(5, 97, 226, 0.06) 0%, var(--jp-card-bg) 100%);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  background: #23272F;
+  color: #D1D5DB;
+}
+
+.chip-urgent {
+  background: rgba(255, 109, 0, 0.15);
+  color: #FFB74D;
+  border: 1px solid rgba(255, 109, 0, 0.3);
+}
+
+.chip-verified {
+  background: rgba(0, 230, 118, 0.15);
+  color: #00E676;
+  border: 1px solid rgba(0, 230, 118, 0.3);
+}
+
+.chip-open {
+  background: rgba(5, 97, 226, 0.15);
+  color: #60A5FA;
+  border: 1px solid rgba(5, 97, 226, 0.3);
+}
+
+/* ==========================================================================
+   JUSPAY FOOTER
+   ========================================================================== */
+.jp-footer {
+  background: #08090A !important;
+  border-top: 1px solid var(--jp-border-dark) !important;
+  padding: 4rem 0 2rem;
+  margin-top: 5rem;
+}
+
+.jp-footer-title {
+  color: #FFFFFF;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 1.25rem;
+}
+
+.jp-footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.jp-footer-links li {
+  margin-bottom: 0.75rem;
+}
+
+.jp-footer-links a {
+  color: var(--jp-gray-subtext);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.jp-footer-links a:hover {
+  color: #FFFFFF;
+}
+
+.jp-social-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #17191B;
+  border: 1px solid var(--jp-border-light);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--jp-gray-text);
+  transition: all 0.2s ease;
+}
+
+.jp-social-btn:hover {
+  color: #FFFFFF;
+  border-color: var(--jp-blue-hover);
+  background: #23272F;
+}
+
+.jp-footer-bottom {
+  border-top: 1px solid var(--jp-border-dark);
+  padding-top: 2rem;
+  margin-top: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--jp-gray-subtext);
+}
+
+.jp-footer-bottom a {
+  color: var(--jp-gray-subtext);
+  transition: all 0.2s ease;
+}
+
+.jp-footer-bottom a:hover {
+  color: #FFFFFF;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .jp-nav-items { display: none; }
+  .jp-nav-pill  { border-radius: 20px; }
+}
+
+
+/* ==========================================================================
+   ULTRA-ATTRACTIVE JUSPAY DESIGN SYSTEM - ELEVATED UX EXTENSIONS
+   Glassmorphism, Interactive Glows, Chip Badges, Day Toggle Pills
+   ========================================================================== */
+
+/* ── Job Card Architecture ── */
+.jp-job-card {
+  background: linear-gradient(135deg, rgba(23, 25, 27, 0.95) 0%, rgba(18, 19, 22, 0.98) 100%);
+  border: 1px solid var(--jp-border-card);
+  border-radius: 20px;
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 1.1rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.jp-job-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: transparent;
+  transition: background 0.25s ease;
+}
+
+.jp-job-card:hover {
+  border-color: rgba(5, 97, 226, 0.6);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 24px rgba(5, 97, 226, 0.2);
+  transform: translateY(-2px);
+}
+
+.jp-job-card:hover::before {
+  background: var(--jp-blue-hover);
+}
+
+.jp-job-card.boosted {
+  border-color: rgba(255, 109, 0, 0.45);
+  background: linear-gradient(135deg, rgba(255, 109, 0, 0.05) 0%, rgba(23, 25, 27, 0.98) 100%);
+}
+
+.jp-job-card.boosted::before {
+  background: var(--jp-orange);
+}
+
+/* ── Job Title & Links ── */
+.jp-job-title-link {
+  text-decoration: none;
+}
+
+.jp-job-title {
+  color: #FFFFFF !important;
+  font-size: 1.18rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  transition: color 0.15s ease;
+}
+
+.jp-job-card:hover .jp-job-title {
+  color: var(--jp-blue-hover) !important;
+}
+
+/* ── Badges ── */
+.jp-badge-urgent {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.22rem 0.65rem;
+  border-radius: 9999px;
+  background: rgba(255, 109, 0, 0.16);
+  color: #FFB74D;
+  border: 1px solid rgba(255, 109, 0, 0.4);
+  box-shadow: 0 0 12px rgba(255, 109, 0, 0.25);
+  animation: urgentPulse 2s ease-in-out infinite;
+}
+
+@keyframes urgentPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 109, 0, 0.2); }
+  50% { box-shadow: 0 0 16px rgba(255, 109, 0, 0.45); }
+}
+
+.jp-badge-verified {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.22rem 0.65rem;
+  border-radius: 9999px;
+  background: rgba(0, 230, 118, 0.12);
+  color: #00E676;
+  border: 1px solid rgba(0, 230, 118, 0.35);
+}
+
+/* ── Job Metadata Row ── */
+.jp-job-meta {
+  font-size: 0.88rem;
+  color: var(--jp-gray-text);
+}
+
+.jp-shop-name {
+  color: #E2E8F0;
+  font-weight: 600;
+}
+
+.jp-dot {
+  color: var(--jp-border-light);
+  font-size: 0.8rem;
+}
+
+.jp-timing {
+  color: var(--jp-gray-text);
+  font-size: 0.86rem;
+}
+
+.jp-distance-chip {
+  display: inline-flex;
+  align-items: center;
+  background: #1F2228;
+  color: #F3F4F6;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid var(--jp-border-card);
+}
+
+.jp-area-text {
+  font-size: 0.84rem;
+}
+
+/* ── Payout Display ── */
+.jp-pay-box {
+  min-width: 140px;
+}
+
+.jp-pay-rate {
+  font-family: var(--font-mono);
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 20px rgba(5, 97, 226, 0.35);
+}
+
+.jp-currency {
+  color: var(--jp-blue-hover);
+  margin-right: 2px;
+}
+
+.jp-pay-cycle {
+  font-size: 0.88rem;
+  color: var(--jp-gray-subtext);
+  font-weight: 500;
+  font-family: var(--font-sans);
+}
+
+.jp-pay-sub {
+  font-size: 0.74rem;
+  color: var(--jp-green);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* ── Divider ── */
+.jp-card-divider {
+  height: 1px;
+  background: linear-gradient(90deg, var(--jp-border-card) 0%, rgba(35, 38, 47, 0.3) 100%);
+}
+
+/* ── Bottom Chips ── */
+.jp-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  transition: all 0.15s ease;
+}
+
+.jp-chip-cat {
+  background: rgba(5, 97, 226, 0.12);
+  color: #60A5FA;
+  border: 1px solid rgba(5, 97, 226, 0.3);
+}
+
+.jp-chip-helpers {
+  background: #23272F;
+  color: #E2E8F0;
+  border: 1px solid var(--jp-border-light);
+}
+
+.jp-chip-rating {
+  background: rgba(255, 179, 0, 0.12);
+  color: #FBBF24;
+  border: 1px solid rgba(255, 179, 0, 0.3);
+}
+
+.jp-chip-safe {
+  background: rgba(0, 230, 118, 0.08);
+  color: #34D399;
+  border: 1px solid rgba(0, 230, 118, 0.25);
+  font-size: 0.74rem;
+}
+
+/* ── Interactive Apply Button ── */
+.jp-apply-btn {
+  font-size: 0.86rem;
+  font-weight: 700;
+  padding: 0.45rem 1.25rem !important;
+  min-height: 38px !important;
+  border-radius: 9999px !important;
+}
+
+.jp-apply-btn .jp-btn-icon {
+  transition: transform 0.2s ease;
+}
+
+.jp-apply-btn:hover .jp-btn-icon {
+  transform: translateX(3px);
+}
+
+/* ── Filter Card & Controls ── */
+.jp-filter-card {
+  background: var(--jp-card-bg);
+  border: 1px solid var(--jp-border-card);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.jp-filter-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--jp-gray-subtext);
+  margin-bottom: 0.45rem;
+  display: block;
+}
+
+.jp-select {
+  background-color: #121316 !important;
+  border: 1.5px solid var(--jp-border-light) !important;
+  border-radius: 12px !important;
+  color: #FFFFFF !important;
+  font-weight: 600;
+  padding: 0.65rem 1rem !important;
+  font-size: 0.92rem !important;
+}
+
+.jp-select:focus {
+  border-color: var(--jp-blue-hover) !important;
+  box-shadow: 0 0 15px rgba(0, 153, 255, 0.25) !important;
+}
+
+/* ── Day Toggle Pills ── */
+.jp-day-pills-group {
+  background: #121316;
+  border: 1px solid var(--jp-border-card);
+  padding: 4px;
+  border-radius: 9999px;
+}
+
+.jp-day-pill {
+  background: transparent;
+  border: none;
+  color: var(--jp-gray-subtext);
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 0.45rem 1.1rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.jp-day-pill:hover {
+  color: #FFFFFF;
+}
+
+.jp-day-pill.active {
+  background: var(--jp-blue) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 16px rgba(5, 97, 226, 0.5);
+}
+
+/* ── Sidebar Filter Box ── */
+.jp-sidebar-box {
+  background: var(--jp-card-bg);
+  border: 1px solid var(--jp-border-card);
+  border-radius: 20px;
+}
+
+.jp-filter-section-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--jp-gray-subtext);
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.jp-check-item {
+  transition: background 0.15s ease;
+  user-select: none;
+}
+
+.jp-check-item:hover {
+  background: #23272F;
+}
+
+.jp-custom-check {
+  background-color: #121316 !important;
+  border: 1.5px solid var(--jp-border-light) !important;
+  border-radius: 6px !important;
+  width: 17px !important;
+  height: 17px !important;
+}
+
+.jp-custom-check:checked {
+  background-color: var(--jp-blue) !important;
+  border-color: var(--jp-blue) !important;
+}
+
+/* ── Trust Sidebar Card ── */
+.jp-trust-sidebar-card {
+  background: linear-gradient(135deg, rgba(5, 97, 226, 0.08) 0%, rgba(23, 25, 27, 0.95) 100%);
+  border: 1px solid rgba(5, 97, 226, 0.3);
+}
+
+.jp-shield-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(5, 97, 226, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Live Stats Pill ── */
+.jp-stats-pill {
+  background: var(--jp-card-bg);
+  border: 1px solid var(--jp-border-card);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Alert Banner ── */
+.jp-alert-success {
+  background: rgba(0, 230, 118, 0.12);
+  border: 1px solid rgba(0, 230, 118, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 230, 118, 0.15);
+}
+
+/* ── Empty State ── */
+.jp-empty-card {
+  background: var(--jp-card-bg);
+  border: 1px solid var(--jp-border-card);
+}
+
+.jp-empty-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #23272F;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Accessibility: High-contrast focus outline for keyboard navigation ── */
+:focus-visible {
+  outline: 2px solid var(--jp-blue) !important;
+  outline-offset: 2px !important;
+}
+
+/* ── Print Stylesheet ── */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+  .jp-navbar, .jp-footer, .btn, .metric-pill {
+    display: none !important;
+  }
+  .lv-card, .jp-job-card {
+    border: 1px solid #CCCCCC !important;
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    break-inside: avoid;
+  }
 }

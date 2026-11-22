@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import Blueprint, request, jsonify, session
 from app.extensions import db, csrf
 from app.models import User, Area, Shop, Job, Application, Rating, Report, Ticket, Draft
@@ -44,7 +44,7 @@ def verify_otp():
 
     res = OTPService.verify_otp(phone, code)
     if res["ok"]:
-        user = User.query.get(res["user_id"])
+        user = db.session.get(User, res["user_id"])
         session["user_id"] = user.id
         session["phone"] = user.phone
         session["role"] = user.active_role
@@ -61,7 +61,7 @@ def switch_role():
     user_id = session.get("user_id")
     if not user_id:
         return api_response(ok=False, error="Unauthorized", status_code=401)
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     new_role = "employer" if user.active_role == "seeker" else "seeker"
     user.active_role = new_role
     session["role"] = new_role
@@ -108,7 +108,7 @@ def create_job():
     user_id = session.get("user_id")
     if not user_id:
         return api_response(ok=False, error="Unauthorized", status_code=401)
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user.shop:
         return api_response(ok=False, error="Shop not set up", status_code=400)
 
@@ -206,7 +206,7 @@ def boost_job(job_id):
     if not user_id:
         return api_response(ok=False, error="Unauthorized", status_code=401)
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user.shop:
         return api_response(ok=False, error="Shop required", status_code=400)
 
@@ -226,7 +226,7 @@ def update_application_status(app_id):
         return api_response(ok=False, error="Unauthorized", status_code=401)
 
     app_entry = Application.query.get_or_404(app_id)
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if app_entry.job.shop_id != user.shop.id:
         return api_response(ok=False, error="Forbidden", status_code=403)
 
@@ -247,7 +247,7 @@ def complete_job_api(job_id):
     user_id = session.get("user_id")
     if not user_id:
         return api_response(ok=False, error="Unauthorized", status_code=401)
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     job = Job.query.filter_by(id=job_id, shop_id=user.shop.id).first_or_404()
 
     job.status = "completed"
@@ -333,7 +333,7 @@ def draft():
             db.session.add(draft_record)
         else:
             draft_record.payload = json.dumps(payload)
-            draft_record.updated_at = datetime.utcnow()
+            draft_record.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
         db.session.commit()
         return api_response(ok=True, message="Draft autosaved")
 

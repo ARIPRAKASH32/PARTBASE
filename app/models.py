@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.extensions import db
 
 class Area(db.Model):
@@ -65,6 +65,11 @@ class SeekerProfile(db.Model):
     free_slots = db.Column(db.String(100), default="anytime")
     rating_avg = db.Column(db.Float, default=0.0)
     jobs_completed = db.Column(db.Integer, default=0)
+    experience_years = db.Column(db.Float, default=0.0)
+    experience_summary = db.Column(db.Text, default="")
+    skills = db.Column(db.String(255), default="")
+    education_level = db.Column(db.String(100), default="")
+    hours_per_day = db.Column(db.Integer, default=4)
 
     def to_dict(self):
         return {
@@ -72,7 +77,12 @@ class SeekerProfile(db.Model):
             "interests": [i.strip() for i in self.interests.split(",") if i.strip()],
             "free_slots": [s.strip() for s in self.free_slots.split(",") if s.strip()],
             "rating_avg": round(self.rating_avg, 1),
-            "jobs_completed": self.jobs_completed
+            "jobs_completed": self.jobs_completed,
+            "experience_years": self.experience_years,
+            "experience_summary": self.experience_summary,
+            "skills": self.skills,
+            "education_level": self.education_level,
+            "hours_per_day": self.hours_per_day
         }
 
 class Shop(db.Model):
@@ -124,6 +134,7 @@ class Job(db.Model):
     time_range = db.Column(db.String(50), nullable=True)  # e.g. "5:00 pm to 9:00 pm"
     pay_amount = db.Column(db.Integer, nullable=False)
     pay_type = db.Column(db.String(20), default="hour")  # hour | day
+    hours_per_shift = db.Column(db.Integer, default=4)  # Shift duration in hours
     people_needed = db.Column(db.Integer, default=1)
     hired_count = db.Column(db.Integer, default=0)
     details = db.Column(db.Text, nullable=True)
@@ -146,13 +157,27 @@ class Job(db.Model):
     def is_currently_boosted(self):
         if not self.is_boosted:
             return False
-        if self.boost_expires_at and self.boost_expires_at < datetime.utcnow():
+        if self.boost_expires_at and self.boost_expires_at < datetime.now(timezone.utc).replace(tzinfo=None):
             return False
         return True
 
     @property
     def is_filled(self):
         return self.hired_count >= self.people_needed
+
+    @property
+    def effective_hourly_pay(self):
+        if self.pay_type == "hour":
+            return self.pay_amount
+        hrs = self.hours_per_shift or 4
+        return max(1, self.pay_amount // hrs)
+
+    @property
+    def total_shift_pay(self):
+        if self.pay_type == "day":
+            return self.pay_amount
+        hrs = self.hours_per_shift or 4
+        return self.pay_amount * hrs
 
     def to_dict(self, seeker_lat=None, seeker_lng=None):
         from app.utils.geo import haversine_distance, build_google_maps_url
@@ -179,6 +204,9 @@ class Job(db.Model):
             "time_range": self.time_range or f"{self.start_time or ''} - {self.end_time or ''}",
             "pay_amount": self.pay_amount,
             "pay_type": self.pay_type,
+            "hours_per_shift": self.hours_per_shift,
+            "effective_hourly_pay": self.effective_hourly_pay,
+            "total_shift_pay": self.total_shift_pay,
             "pay_display": f"₹{self.pay_amount}/{self.pay_type}",
             "people_needed": self.people_needed,
             "hired_count": self.hired_count,
@@ -331,15 +359,15 @@ class OTPRequest(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def is_locked(self):
-        if self.locked_until and self.locked_until > datetime.utcnow():
+        if self.locked_until and self.locked_until > datetime.now(timezone.utc).replace(tzinfo=None):
             return True
         return False
 
     def is_expired(self):
-        return datetime.utcnow() > self.expires_at
+        return datetime.now(timezone.utc).replace(tzinfo=None) > self.expires_at
 
     def can_resend(self):
-        return datetime.utcnow() >= self.resend_available_at
+        return datetime.now(timezone.utc).replace(tzinfo=None) >= self.resend_available_at
 
 class AuditLog(db.Model):
     __tablename__ = "audit_logs"

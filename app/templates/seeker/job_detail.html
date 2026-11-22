@@ -1,71 +1,116 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container py-3">
+<div class="container py-4">
   <!-- Back Link -->
-  <div class="mb-3">
-    <a href="{{ url_for('seeker.jobs') }}" class="text-decoration-none text-muted fw-semibold small">
-      <i class="bi bi-arrow-left me-1"></i> Back to jobs
+  <div class="mb-4">
+    <a href="{{ url_for('seeker.jobs') }}" class="jp-cta-link small">
+      <i class="bi bi-arrow-left me-1"></i> Back to Jobs Feed
     </a>
   </div>
 
-  <div class="row">
+  <div class="row g-4">
     <!-- Left Job Detail Card -->
-    <div class="col-lg-7 mb-3">
-      <div class="lv-card p-4">
-        <div class="d-flex justify-content-between align-items-start mb-2">
+    <div class="col-lg-7">
+      <div class="lv-card p-4 p-md-5 mb-4">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
           <div>
-            <h3 class="fw-bold mb-1 text-dark">{{ job.title }}</h3>
-            <div class="d-flex align-items-center gap-2 mb-2">
-              <span class="fw-semibold text-secondary fs-6">{{ job.shop.shop_name }}</span>
+            <h2 class="fw-bold mb-2 text-white">{{ job.title }}</h2>
+            <div class="d-flex align-items-center flex-wrap gap-2">
+              <span class="fw-semibold text-white fs-6">
+                <i class="bi bi-shop text-primary me-1"></i>{{ job.shop.shop_name if job.shop else 'Neighborhood Store' }}
+              </span>
               {% if job.shop and job.shop.is_verified %}
-                <span class="chip-verified"><i class="bi bi-patch-check-fill"></i> Verified</span>
+                <span class="jp-chip jp-chip-verified"><i class="bi bi-patch-check-fill me-1"></i>Verified Shop</span>
               {% endif %}
               {% if job.shop and job.shop.rating_avg > 0 %}
-                <span class="text-muted small">★ {{ job.shop.rating_avg }} · {{ job.shop.rating_count }} ratings</span>
+                <span class="jp-chip jp-chip-rating">★ {{ "%.1f" | format(job.shop.rating_avg) }} · {{ job.shop.rating_count }} Reviews</span>
               {% endif %}
             </div>
           </div>
-          <a href="{{ url_for('seeker.report_job', job_id=job.id) }}" class="text-danger small text-decoration-none fw-semibold">
-            <i class="bi bi-flag-fill me-1"></i> Report this job
+          <a href="{{ url_for('seeker.report_job', job_id=job.id) }}" class="small text-danger text-decoration-none fw-semibold">
+            <i class="bi bi-flag-fill me-1"></i> Report Job
           </a>
         </div>
 
-        <div class="my-3">
-          <span class="fs-2 fw-bold text-primary">₹{{ job.pay_amount }}</span>
-          <span class="text-muted">/{{ job.pay_type }}</span>
+        <!-- JD Compensation & Hours-wise Breakdown Card -->
+        <div class="my-4 p-4 rounded-4" style="background: rgba(5, 97, 226, 0.08); border: 1px solid rgba(5, 97, 226, 0.25);">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <div>
+              <span class="small text-muted text-uppercase d-block" style="letter-spacing: 0.8px; font-size: 0.72rem;">Shift Work &amp; Compensation</span>
+              <div class="jp-pay-rate mt-1">
+                <span class="jp-currency">₹</span>{{ job.pay_amount }}<span class="jp-pay-cycle">/{{ job.pay_type }}</span>
+              </div>
+            </div>
+            <span class="badge bg-primary bg-opacity-25 text-info border border-info border-opacity-25 px-3 py-2 rounded-pill fs-6">
+              <i class="bi bi-clock-history me-1"></i>{{ job.hours_per_shift or 4 }} Hours Shift
+            </span>
+          </div>
+
+          <!-- Clear Hours-Wise Money Grid -->
+          <div class="row g-2 pt-2 border-top border-secondary border-opacity-25">
+            <div class="col-sm-4">
+              <div class="p-2 rounded" style="background: rgba(0, 0, 0, 0.25);">
+                <span class="text-muted d-block small" style="font-size: 0.72rem;">HOURLY RATE</span>
+                <strong class="text-white fs-6">₹{{ job.effective_hourly_pay }} / hr</strong>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="p-2 rounded" style="background: rgba(0, 0, 0, 0.25);">
+                <span class="text-muted d-block small" style="font-size: 0.72rem;">SHIFT DURATION</span>
+                <strong class="text-info fs-6">{{ job.hours_per_shift or 4 }} Hours</strong>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="p-2 rounded" style="background: rgba(0, 230, 118, 0.1); border: 1px solid rgba(0, 230, 118, 0.25);">
+                <span class="text-success d-block small" style="font-size: 0.72rem;">TOTAL PAYOUT</span>
+                <strong class="text-success fs-6">₹{{ job.total_shift_pay }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="small text-success mt-3 d-flex align-items-center gap-1">
+            <i class="bi bi-shield-check fs-6"></i>
+            <span>Direct cash/UPI payment after shift. Zero candidate fees deducted.</span>
+          </div>
         </div>
 
-        <div class="border-top border-bottom py-3 my-3">
-          <div class="row g-2 small">
-            <div class="col-sm-6">
-              <span class="text-muted d-block">TIMING</span>
-              <span class="fw-bold text-dark">
-                {% if job.day_option == 'today' %}Today{% elif job.day_option == 'tomorrow' %}Tomorrow{% else %}This weekend{% endif %}
-                · {{ job.time_range or 'Full day' }}
-              </span>
-            </div>
-            <div class="col-sm-6">
-              <span class="text-muted d-block">LOCATION & DISTANCE</span>
-              <span class="fw-bold text-dark">{{ job.shop.area.name if job.shop.area else 'Chennai' }} · {{ distance }} km</span>
-            </div>
+        <div class="jp-card-divider my-4"></div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-sm-6">
+            <span class="text-muted small text-uppercase d-block mb-1" style="letter-spacing: 0.5px;">Shift Schedule</span>
+            <span class="fw-bold text-white fs-6">
+              <i class="bi bi-calendar-event text-primary me-1"></i>
+              {% if job.day_option == 'today' %}Today{% elif job.day_option == 'tomorrow' %}Tomorrow{% else %}This Weekend{% endif %}
+              · {{ job.time_range or 'Full Day' }}
+            </span>
+          </div>
+          <div class="col-sm-6">
+            <span class="text-muted small text-uppercase d-block mb-1" style="letter-spacing: 0.5px;">Neighborhood Location</span>
+            <span class="fw-bold text-white fs-6">
+              <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+              {{ job.shop.area.name if job.shop and job.shop.area else 'Chennai' }} · {{ distance }} km away
+            </span>
           </div>
         </div>
 
         {% if job.details %}
           <div class="mb-4">
-            <label class="form-label small fw-bold text-muted">JOB DETAILS</label>
-            <p class="text-dark mb-0">{{ job.details }}</p>
+            <label class="small fw-bold text-muted text-uppercase d-block mb-2" style="letter-spacing: 0.5px;">Shift Duties &amp; Requirements</label>
+            <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--jp-border-card); color: var(--jp-gray-text);">
+              {{ job.details }}
+            </div>
           </div>
         {% endif %}
 
         <div class="d-flex flex-wrap gap-2 mb-4">
-          <a href="{{ directions_url }}" target="_blank" class="btn btn-lv-outline">
-            <i class="bi bi-compass me-1"></i> Directions ↗
+          <a href="{{ directions_url }}" target="_blank" class="btn btn-sm btn-lv-outline">
+            <i class="bi bi-compass me-1"></i> Google Maps Directions ↗
           </a>
           {% if job.shop and job.shop.owner and job.shop.owner.phone %}
-            <a href="tel:{{ job.shop.owner.phone }}" class="btn btn-lv-outline">
-              <i class="bi bi-telephone-fill text-success me-1"></i> Call the shop
+            <a href="tel:{{ job.shop.owner.phone }}" class="btn btn-sm btn-lv-outline">
+              <i class="bi bi-telephone-fill text-success me-1"></i> Call Store Owner
             </a>
           {% endif %}
         </div>
@@ -78,56 +123,60 @@
     <!-- Right Apply Card or Similar Jobs -->
     <div class="col-lg-5">
       {% if job.status == 'open' and not job.is_filled %}
-        <div class="lv-card p-4">
-          <h4 class="fw-bold mb-1">Apply to this job</h4>
-          <p class="text-muted small mb-3">Your name, area and free time are shared with the shop.</p>
+        <div class="lv-card p-4 p-md-5">
+          <h4 class="fw-bold text-white mb-1">Apply in 30 Seconds</h4>
+          <p class="text-muted small mb-4">Your verified contact and area will be sent to the merchant.</p>
 
           {% if not user %}
-            <div class="p-4 bg-light rounded-3 border text-center mb-3">
+            <div class="p-4 rounded-4 text-center mb-3" style="background: rgba(5, 97, 226, 0.08); border: 1px solid rgba(5, 97, 226, 0.25);">
               <div class="fs-1 text-primary mb-2"><i class="bi bi-person-lock"></i></div>
-              <h5 class="fw-bold text-dark mb-1">Sign in to apply</h5>
-              <p class="text-muted small mb-3">Connect directly with this shop and start work today.</p>
-              <a href="{{ url_for('auth.login') }}" class="btn btn-lv-primary w-100 py-2 fs-6 fw-bold shadow">
-                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In with Mobile Number
+              <h5 class="fw-bold text-white mb-1">Sign In to Apply</h5>
+              <p class="text-muted small mb-3">Connect directly with this shop and start earning.</p>
+              <a href="{{ url_for('auth.login') }}" class="btn btn-lv-primary w-100 py-2 fs-6 fw-bold">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In with OTP
               </a>
             </div>
           {% elif existing_app %}
-            <div class="alert alert-info py-2 small mb-3">
-              <i class="bi bi-info-circle me-1"></i> You applied on {{ existing_app.applied_at.strftime('%d %b, %H:%M') }}.
+            <div class="alert alert-info py-3 mb-3">
+              <i class="bi bi-info-circle-fill me-1"></i> You applied on {{ existing_app.applied_at.strftime('%d %b, %H:%M') }}.
             </div>
-            <a href="{{ url_for('seeker.applications') }}" class="btn btn-lv-outline w-100">Track in Applied</a>
+            <a href="{{ url_for('seeker.applications') }}" class="btn btn-lv-outline w-100 py-2">
+              Track in Applications
+            </a>
           {% else %}
             <form method="POST" action="{{ url_for('seeker.job_detail', job_id=job.id) }}" class="prevent-double-submit">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-              <div class="mb-3">
-                <label class="form-label small fw-semibold">Note (optional)</label>
-                <textarea name="note" class="form-control" rows="3" placeholder="e.g. I can come at 5 pm and have experience with stitching..."></textarea>
+              <div class="mb-4">
+                <label class="form-label small fw-semibold">Note to Store Owner (Optional)</label>
+                <textarea name="note" class="form-control" rows="3" placeholder="e.g. I live nearby in Thoraipakkam and can start by 5 PM..."></textarea>
               </div>
 
               <button type="submit" class="btn btn-lv-primary w-100 py-2 fs-6 fw-bold">
-                Send application
+                Submit Application <i class="bi bi-arrow-right ms-1"></i>
               </button>
             </form>
           {% endif %}
         </div>
       {% else %}
         <!-- Filled or Closed Job Notice -->
-        <div class="lv-card p-4 border-warning">
-          <div class="badge bg-secondary mb-2">This job is closed</div>
-          <h5 class="fw-bold mb-2">All positions filled</h5>
-          <p class="text-muted small mb-3">This micro-job has already hired the required helpers.</p>
+        <div class="lv-card p-4 p-md-5 border-warning">
+          <span class="badge bg-secondary bg-opacity-25 text-white-50 px-2 py-1 mb-2 rounded">Closed</span>
+          <h4 class="fw-bold text-white mb-2">Positions Filled</h4>
+          <p class="text-muted small mb-3">This micro-job has already filled its opening.</p>
 
           {% if similar_jobs %}
-            <h6 class="fw-bold small text-uppercase text-muted mt-4 mb-2">Similar jobs near you</h6>
+            <h6 class="fw-bold small text-uppercase text-muted mt-4 mb-3">Similar Shifts Near You</h6>
             {% for sj in similar_jobs %}
-              <div class="border rounded p-2 mb-2 bg-light">
+              <div class="p-3 mb-2 rounded-3" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--jp-border-card);">
                 <div class="d-flex justify-content-between align-items-center">
                   <div>
-                    <div class="fw-bold text-dark small">{{ sj.title }}</div>
-                    <div class="text-muted" style="font-size: 0.75rem;">{{ sj.shop.shop_name }} · ₹{{ sj.pay_amount }}/{{ sj.pay_type }}</div>
+                    <div class="fw-bold text-white small">{{ sj.title }}</div>
+                    <div class="text-muted" style="font-size: 0.78rem;">{{ sj.shop.shop_name if sj.shop else '' }} · ₹{{ sj.pay_amount }}/{{ sj.pay_type }}</div>
                   </div>
-                  <a href="{{ url_for('seeker.job_detail', job_id=sj.id) }}" class="btn btn-sm btn-primary py-0 px-2" style="font-size: 0.8rem;">View</a>
+                  <a href="{{ url_for('seeker.job_detail', job_id=sj.id) }}" class="btn btn-sm btn-lv-primary py-1 px-3">
+                    View
+                  </a>
                 </div>
               </div>
             {% endfor %}

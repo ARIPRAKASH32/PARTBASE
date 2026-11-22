@@ -18,7 +18,7 @@ def employer_required(f):
         if not session.get("user_id"):
             session["intent_role"] = "employer"
             return redirect(url_for("auth.login"))
-        user = User.query.get(session["user_id"])
+        user = db.session.get(User, session["user_id"])
         if not user:
             session.clear()
             return redirect(url_for("auth.login"))
@@ -28,7 +28,7 @@ def employer_required(f):
 @employer_bp.route("/setup", methods=["GET", "POST"])
 @employer_required
 def setup():
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
     areas = Area.query.order_by(Area.name).all()
 
     if request.method == "POST":
@@ -53,7 +53,7 @@ def setup():
         if area_id:
             shop.area_id = int(area_id)
             user.area_id = int(area_id)
-            area = Area.query.get(int(area_id))
+            area = db.session.get(Area, int(area_id))
             if area:
                 shop.lat = area.lat
                 shop.lng = area.lng
@@ -75,12 +75,41 @@ def setup():
 
     return render_template("employer/setup.html", user=user, areas=areas)
 
+@employer_bp.route("/dashboard")
+def dashboard():
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect(url_for("auth.demo_login", role="employer"))
+    user = db.session.get(User, user_id)
+    if not user.shop:
+        return redirect(url_for("employer.setup"))
+
+    shop = user.shop
+    all_jobs = Job.query.filter_by(shop_id=shop.id).order_by(Job.created_at.desc()).all()
+    active_jobs = [j for j in all_jobs if j.status == 'open']
+    job_ids = [j.id for j in all_jobs]
+    all_applications = Application.query.filter(Application.job_id.in_(job_ids)).order_by(Application.applied_at.desc()).all() if job_ids else []
+    pending_applicants = [a for a in all_applications if a.status == 'applied']
+    hired_candidates = [a for a in all_applications if a.status == 'hired']
+    total_views = sum(j.view_count for j in all_jobs)
+
+    return render_template(
+        "employer/dashboard.html",
+        shop=shop,
+        all_jobs=all_jobs,
+        active_jobs=active_jobs,
+        all_applications=all_applications,
+        pending_applicants=pending_applicants,
+        hired_candidates=hired_candidates,
+        total_views=total_views
+    )
+
 @employer_bp.route("/posts")
 def posts():
     user_id = session.get("user_id")
     if not user_id:
         return redirect(url_for("auth.demo_login", role="employer"))
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
     if not user.shop:
         return redirect(url_for("employer.setup"))
 
@@ -93,7 +122,7 @@ def posts():
 @employer_bp.route("/post", methods=["GET", "POST"])
 def post_job():
     user_id = session.get("user_id")
-    user = User.query.get(user_id) if user_id else None
+    user = db.session.get(User, user_id) if user_id else None
     
     # If not logged in on POST, prompt demo or login
     if request.method == "POST" and (not user or not user.shop):
@@ -130,6 +159,7 @@ def post_job():
         time_range = request.form.get("time_range", "5:00 pm to 9:00 pm").strip()
         pay_amount = request.form.get("pay_amount", 100, type=int)
         pay_type = request.form.get("pay_type", "hour")
+        hours_per_shift = request.form.get("hours_per_shift", 4, type=int)
         people_needed = request.form.get("people_needed", 1, type=int)
         address = request.form.get("address", shop.address).strip()
         details = request.form.get("details", "").strip()
@@ -151,6 +181,7 @@ def post_job():
             time_range=time_range,
             pay_amount=pay_amount,
             pay_type=pay_type,
+            hours_per_shift=hours_per_shift,
             people_needed=people_needed,
             address=address,
             details=details,
@@ -171,14 +202,14 @@ def post_job():
 @employer_required
 def job_live():
     job_id = session.get("last_posted_job_id")
-    job = Job.query.get(job_id) if job_id else None
-    user = User.query.get(session["user_id"])
+    job = db.session.get(Job, job_id) if job_id else None
+    user = db.session.get(User, session["user_id"])
     return render_template("employer/job_live.html", job=job, shop=user.shop)
 
 @employer_bp.route("/jobs/<int:job_id>")
 @employer_required
 def job_detail(job_id):
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
     job = Job.query.filter_by(id=job_id, shop_id=user.shop.id).first_or_404()
 
     applicants = Application.query.filter_by(job_id=job.id).all()
@@ -195,7 +226,7 @@ def job_detail(job_id):
 @employer_bp.route("/applicants/<int:app_id>")
 @employer_required
 def applicant_profile(app_id):
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
     app_entry = Application.query.get_or_404(app_id)
     if app_entry.job.shop_id != user.shop.id:
         flash("Unauthorized", "danger")
@@ -220,7 +251,7 @@ def applicant_profile(app_id):
 @employer_bp.route("/applicants/<int:app_id>/status", methods=["POST"])
 @employer_required
 def update_applicant_status(app_id):
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
     app_entry = Application.query.get_or_404(app_id)
     job = app_entry.job
     if job.shop_id != user.shop.id:
@@ -244,7 +275,7 @@ def update_applicant_status(app_id):
 @employer_bp.route("/jobs/<int:job_id>/complete", methods=["POST"])
 @employer_required
 def complete_job(job_id):
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
     job = Job.query.filter_by(id=job_id, shop_id=user.shop.id).first_or_404()
 
     job.status = "completed"
@@ -262,7 +293,7 @@ def complete_job(job_id):
 @employer_bp.route("/boost/<int:job_id>", methods=["GET", "POST"])
 @employer_required
 def boost_job(job_id):
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
     job = Job.query.filter_by(id=job_id, shop_id=user.shop.id).first_or_404()
 
     if request.method == "POST":
@@ -280,13 +311,13 @@ def boost_job(job_id):
 @employer_required
 def boost_live():
     job_id = request.args.get("job_id", type=int)
-    job = Job.query.get(job_id) if job_id else None
+    job = db.session.get(Job, job_id) if job_id else None
     return render_template("employer/boost_live.html", job=job)
 
 @employer_bp.route("/rate/<int:app_id>", methods=["GET", "POST"])
 @employer_required
 def rate_worker(app_id):
-    user = User.query.get(session["user_id"])
+    user = db.session.get(User, session["user_id"])
     app_entry = Application.query.get_or_404(app_id)
     job = app_entry.job
     if job.shop_id != user.shop.id:

@@ -31,7 +31,7 @@ def demo_login(role):
         user.active_role = "seeker"
         db.session.commit()
         flash("Logged in as Demo Seeker (Priya K)", "success")
-        return redirect(url_for("seeker.jobs"))
+        return redirect(url_for("seeker.dashboard"))
 
     elif role == "employer":
         user = User.query.filter_by(phone="+919876543210").first()
@@ -50,7 +50,7 @@ def demo_login(role):
         user.active_role = "employer"
         db.session.commit()
         flash("Logged in as Demo Employer (Sri Murugan Tailors)", "success")
-        return redirect(url_for("employer.posts"))
+        return redirect(url_for("employer.dashboard"))
 
     elif role == "admin":
         user = User.query.filter_by(phone="+919876500000").first()
@@ -65,7 +65,7 @@ def demo_login(role):
         session["role"] = "admin"
         session["is_admin"] = True
         flash("Logged in as PARTBASE Admin", "success")
-        return redirect(url_for("admin.reports"))
+        return redirect(url_for("admin.dashboard"))
 
     return redirect(url_for("auth.landing"))
 
@@ -124,7 +124,7 @@ def verify():
                 flash(res["message"], "danger")
                 return render_template("auth/verify.html", phone=phone, role=role)
 
-        user = User.query.get(res["user_id"])
+        user = db.session.get(User, res["user_id"])
         session["user_id"] = user.id
         session["phone"] = user.phone
         session["is_admin"] = user.is_admin or (user.phone in current_app.config.get("ADMIN_PHONES", []))
