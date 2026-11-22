@@ -37,7 +37,7 @@ def seed_database():
         admin_phone = "+919876500000"
         admin_user = User(
             phone=admin_phone,
-            name="LocalVelai Admin",
+            name="PARTBASE Admin",
             area_id=areas["Anna Nagar"].id,
             is_phone_verified=True,
             active_role="admin",

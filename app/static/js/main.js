@@ -1,4 +1,4 @@
-// LocalVelai Main Utilities
+// PARTBASE Main Utilities
 document.addEventListener("DOMContentLoaded", function () {
   // Auto-dismiss alerts after 5 seconds
   const alerts = document.querySelectorAll(".alert-dismissible");

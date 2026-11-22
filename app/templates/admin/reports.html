@@ -107,6 +107,13 @@
 
           <!-- Navigation Links -->
           <nav class="d-flex flex-column gap-2 mb-4">
+            <a class="admin-nav-item" href="{{ url_for('admin.dashboard') }}">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-speedometer2 text-primary"></i>
+                <span>Dashboard</span>
+              </div>
+            </a>
+
             <a class="admin-nav-item active" href="{{ url_for('admin.reports') }}">
               <div class="d-flex align-items-center gap-2">
                 <i class="bi bi-shield-exclamation text-danger"></i>

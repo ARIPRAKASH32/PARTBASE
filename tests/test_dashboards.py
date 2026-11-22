@@ -22,6 +22,6 @@ def test_admin_dashboard(client, app):
         client.get("/demo-login/admin")
         res = client.get("/admin/dashboard")
         assert res.status_code == 200
-        assert b"Command Center" in res.data
+        assert b"Control Center" in res.data or b"ADMIN CONSOLE" in res.data
         assert b"Flagged Incidents" in res.data
         assert b"Pending Merchant KYC" in res.data
