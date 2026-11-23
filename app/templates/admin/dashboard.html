@@ -11,12 +11,12 @@
   <style>
     .admin-layout {
       min-height: 100vh;
-      background: radial-gradient(circle at 20% 0%, rgba(5, 97, 226, 0.15) 0%, transparent 50%),
-                  radial-gradient(circle at 80% 80%, rgba(0, 240, 255, 0.06) 0%, transparent 45%),
-                  #0A0B0D;
+      background: radial-gradient(circle at 20% 0%, rgba(198, 244, 50, 0.12) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(198, 244, 50, 0.05) 0%, transparent 45%),
+                  #0B0B0C;
     }
     .admin-sidebar-glass {
-      background: rgba(14, 16, 20, 0.95);
+      background: rgba(15, 15, 16, 0.95);
       border-right: 1px solid rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(20px);
     }
@@ -25,8 +25,8 @@
       align-items: center;
       justify-content: space-between;
       padding: 0.75rem 1rem;
-      border-radius: 12px;
-      color: var(--jp-gray-text);
+      border-radius: 9999px;
+      color: var(--pb-muted);
       text-decoration: none;
       font-weight: 600;
       font-size: 0.92rem;
@@ -39,13 +39,14 @@
       transform: translateX(2px);
     }
     .admin-nav-item.active {
-      color: #FFFFFF;
-      background: linear-gradient(90deg, rgba(5, 97, 226, 0.28) 0%, rgba(5, 97, 226, 0.08) 100%);
-      border: 1px solid rgba(5, 97, 226, 0.5);
-      box-shadow: 0 4px 20px rgba(5, 97, 226, 0.25);
+      color: #0B0B0C;
+      background: #C6F432;
+      border: 1px solid #C6F432;
+      box-shadow: 0 4px 20px rgba(198, 244, 50, 0.35);
+      font-weight: 700;
     }
     .admin-kpi-card {
-      background: linear-gradient(135deg, rgba(23, 26, 31, 0.95) 0%, rgba(15, 17, 21, 0.98) 100%);
+      background: linear-gradient(135deg, rgba(22, 22, 24, 0.95) 0%, rgba(15, 15, 16, 0.98) 100%);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 20px;
       padding: 1.5rem 1.6rem;
@@ -57,7 +58,7 @@
     .admin-kpi-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
-      border-color: rgba(255, 255, 255, 0.16);
+      border-color: rgba(198, 244, 50, 0.3);
     }
     .admin-kpi-icon {
       width: 44px;
