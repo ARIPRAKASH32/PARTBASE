@@ -57,3 +57,10 @@ def test_set_language_endpoint(client):
     assert res.status_code == 200
     with client.session_transaction() as sess:
         assert sess.get("lang") == "en"
+
+def test_footer_renders_branding_and_language_toggle(client):
+    res = client.get("/")
+    assert res.status_code == 200
+    assert b"logo.svg" in res.data
+    assert b"set-lang/ta" in res.data
+
