@@ -39,6 +39,7 @@ def create_app(config_class=Config):
     def inject_globals():
         from app.models import User, Area
         from app.utils.helpers import mask_phone
+        from app.utils.i18n import t, get_current_lang, translate_category, translate_day
         user = None
         user_id = session.get("user_id")
         if user_id:
@@ -50,7 +51,11 @@ def create_app(config_class=Config):
             "is_admin": session.get("is_admin", False),
             "all_areas": areas,
             "mask_phone": mask_phone,
-            "pilot_areas": app.config.get("PILOT_AREAS", ["OMR", "Anna Nagar"])
+            "pilot_areas": app.config.get("PILOT_AREAS", ["OMR", "Anna Nagar"]),
+            "t": t,
+            "current_lang": get_current_lang(),
+            "translate_category": translate_category,
+            "translate_day": translate_day
         }
 
     # User active block check

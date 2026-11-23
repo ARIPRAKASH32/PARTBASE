@@ -45,6 +45,10 @@
 
     <!-- Right Side Actions -->
     <div class="d-flex align-items-center gap-2">
+      <!-- Language Switcher Pill -->
+      <a href="{{ url_for('auth.set_language', lang='ta' if current_lang == 'en' else 'en') }}" class="btn btn-sm rounded-pill px-2 py-1 fs-7" style="border: 1px solid rgba(255,255,255,0.15); color: #C6F432; font-size: 0.78rem; font-weight: 600; background: rgba(255,255,255,0.04);" title="Switch language / மொழி மாற்றம்">
+        <i class="bi bi-translate me-1"></i>{{ 'தமிழ்' if current_lang == 'en' else 'ENG' }}
+      </a>
       {% if current_user %}
         <span class="jp-tag d-none d-sm-inline-flex">
           <i class="bi bi-person-fill text-lime"></i> {{ current_user.name or 'Account' }}
