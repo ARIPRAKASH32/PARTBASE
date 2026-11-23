@@ -352,3 +352,60 @@ def map_helper():
 @seeker_required
 def profile():
     return redirect(url_for("support.profile"))
+
+@seeker_bp.route("/dashboard")
+@seeker_required
+def dashboard():
+    user = db.session.get(User, session["user_id"])
+    profile = user.seeker_profile or SeekerProfile(user_id=user.id)
+    applications = Application.query.filter_by(seeker_id=user.id).order_by(Application.applied_at.desc()).all()
+    completed_shifts = [a for a in applications if a.status == "completed"]
+    total_earnings = sum(a.job.total_shift_pay for a in completed_shifts if a.job)
+    active_apps = [a for a in applications if a.status in ["applied", "shortlisted", "hired"]]
+    recommended_jobs = Job.query.filter_by(status="open").order_by(Job.is_boosted.desc(), Job.created_at.desc()).limit(4).all()
+
+    return render_template(
+        "seeker/dashboard.html",
+        user=user,
+        profile=profile,
+        applications=applications,
+        completed_shifts=completed_shifts,
+        total_earnings=total_earnings,
+        active_apps=active_apps,
+        recommended_jobs=recommended_jobs
+    )
+
+@seeker_bp.route("/experience", methods=["GET", "POST"])
+@seeker_required
+def experience():
+    user = db.session.get(User, session["user_id"])
+    profile = user.seeker_profile
+    if not profile:
+        profile = SeekerProfile(user_id=user.id)
+        db.session.add(profile)
+        db.session.commit()
+
+    if request.method == "POST":
+        try:
+            profile.experience_years = float(request.form.get("experience_years", 0) or 0)
+        except ValueError:
+            profile.experience_years = 0.0
+
+        profile.education_level = request.form.get("education_level", "").strip()
+        profile.skills = request.form.get("skills", "").strip()
+        profile.experience_summary = request.form.get("experience_summary", "").strip()
+        try:
+            profile.hours_per_day = int(request.form.get("hours_per_day", 4) or 4)
+        except ValueError:
+            profile.hours_per_day = 4
+
+        # Update preferred slots / roles if supplied
+        interests = request.form.getlist("interests")
+        if interests:
+            profile.interests = ",".join(interests)
+
+        db.session.commit()
+        flash("Work experience and hourly preferences updated successfully!", "success")
+        return redirect(url_for("seeker.dashboard"))
+
+    return render_template("seeker/experience_form.html", user=user, profile=profile)

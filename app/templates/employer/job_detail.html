@@ -1,31 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container py-3">
+<div class="container py-4">
   <!-- Back Link -->
   <div class="mb-3">
-    <a href="{{ url_for('employer.posts') }}" class="text-decoration-none text-muted fw-semibold small">
-      <i class="bi bi-arrow-left me-1"></i> My posts
+    <a href="{{ url_for('employer.posts') }}" class="jp-cta-link small">
+      <i class="bi bi-arrow-left me-1"></i> Back to My Postings
     </a>
   </div>
 
   <!-- Job Header Title & Status -->
-  <div class="d-flex justify-content-between align-items-start mb-3">
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
     <div>
-      <h3 class="fw-bold mb-1 text-dark">{{ job.title }}</h3>
+      <h3 class="fw-bold mb-1 text-white">{{ job.title }}</h3>
       <div class="text-muted small">
         {% if job.day_option == 'today' %}Today{% elif job.day_option == 'tomorrow' %}Tomorrow{% else %}Weekend{% endif %}
         {% if job.time_range %}· {{ job.time_range }}{% endif %} ·
-        <span class="fw-semibold text-primary">₹{{ job.pay_amount }}/{{ job.pay_type }}</span> ·
+        <span class="fw-semibold text-info">₹{{ job.pay_amount }}/{{ job.pay_type }}</span> ·
         {{ shop.address }}
       </div>
     </div>
-    <div>
-      <span class="chip-status chip-status-{{ job.status }} text-capitalize fs-6">
-        {{ job.status.replace('_', ' ') }}
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-secondary bg-opacity-25 text-white-50 px-2 py-1 rounded">
+        {{ job.status }}
       </span>
       {% if job.is_currently_boosted %}
-        <span class="chip-urgent ms-1"><i class="bi bi-lightning-charge-fill"></i> Urgent</span>
+        <span class="jp-badge-urgent"><i class="bi bi-lightning-charge-fill me-1"></i>Urgent Active</span>
       {% endif %}
     </div>
   </div>
@@ -33,39 +33,39 @@
   <!-- 3 Stats Counters -->
   <div class="row g-3 mb-4">
     <div class="col-md-4">
-      <div class="lv-card p-3 text-center">
-        <h2 class="fw-bold text-dark mb-0">{{ applicants|length }}</h2>
-        <span class="text-muted small fw-semibold">Applicants</span>
+      <div class="stat-box text-center">
+        <div class="stat-number text-white">{{ applicants|length }}</div>
+        <div class="stat-label">Total Applicants</div>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="lv-card p-3 text-center">
-        <h2 class="fw-bold text-primary mb-0">{{ job.hired_count }} of {{ job.people_needed }}</h2>
-        <span class="text-muted small fw-semibold">Hired</span>
+      <div class="stat-box text-center">
+        <div class="stat-number text-primary">{{ job.hired_count }} / {{ job.people_needed }}</div>
+        <div class="stat-label">Helpers Confirmed</div>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="lv-card p-3 text-center">
-        <h2 class="fw-bold text-secondary mb-0">{{ job.view_count or 48 }}</h2>
-        <span class="text-muted small fw-semibold">People seen this job</span>
+      <div class="stat-box text-center">
+        <div class="stat-number text-info">{{ job.view_count or 48 }}</div>
+        <div class="stat-label">Feed Impressions</div>
       </div>
     </div>
   </div>
 
-  <div class="row">
+  <div class="row g-4">
     <!-- Left Applicants Table -->
-    <div class="col-lg-8 mb-4">
-      <div class="lv-card p-3">
-        <h5 class="fw-bold mb-3">Applicants</h5>
+    <div class="col-lg-8">
+      <div class="lv-card p-4">
+        <h5 class="fw-bold text-white mb-3">Applicants Queue</h5>
 
         {% if applicants %}
           <div class="table-responsive">
             <table class="table align-middle mb-0">
-              <thead class="table-light small text-muted">
+              <thead>
                 <tr>
-                  <th>Name</th>
+                  <th>Seeker Name</th>
                   <th>Distance</th>
-                  <th>Free</th>
+                  <th>Free Slot</th>
                   <th>Status</th>
                   <th class="text-end">Action</th>
                 </tr>
@@ -74,23 +74,23 @@
                 {% for app in applicants %}
                   <tr>
                     <td>
-                      <div class="fw-bold text-dark">{{ app.seeker.name or 'Seeker' }}</div>
-                      <div class="text-muted small">★ {{ app.seeker_rating or 4.8 }}</div>
+                      <div class="fw-bold text-white">{{ app.seeker.name or 'Seeker' }}</div>
+                      <div class="text-warning small">★ {{ app.seeker_rating or 4.8 }}</div>
                     </td>
-                    <td class="small">{{ app.distance_km or 1.2 }} km</td>
+                    <td class="small text-muted">{{ app.distance_km or 1.2 }} km</td>
                     <td class="small text-muted">{{ app.seeker.free_slots or 'Anytime' }}</td>
                     <td>
-                      <span class="chip-status chip-status-{{ app.status }} text-capitalize small">
+                      <span class="badge bg-secondary bg-opacity-25 text-white-50">
                         {{ app.status }}
                       </span>
                     </td>
                     <td class="text-end">
-                      <div class="btn-group btn-group-sm">
+                      <div class="d-inline-flex gap-2">
                         {% if app.seeker.phone %}
-                          <a href="tel:{{ app.seeker.phone }}" class="btn btn-outline-secondary">Call</a>
+                          <a href="tel:{{ app.seeker.phone }}" class="btn btn-sm btn-outline-secondary">Call</a>
                         {% endif %}
-                        <a href="{{ url_for('employer.applicant_profile', app_id=app.id) }}" class="btn btn-primary">
-                          {% if app.status == 'applied' %}View / Shortlist{% else %}View{% endif %}
+                        <a href="{{ url_for('employer.applicant_profile', app_id=app.id) }}" class="btn btn-sm btn-lv-primary">
+                          {% if app.status == 'applied' %}Review &amp; Hire{% else %}View{% endif %}
                         </a>
                       </div>
                     </td>
@@ -100,9 +100,9 @@
             </table>
           </div>
         {% else %}
-          <div class="text-center py-4 text-muted">
-            <i class="bi bi-people fs-2 mb-2"></i>
-            <p class="small mb-0">No applicants yet. Nearby seekers will be notified.</p>
+          <div class="text-center py-5 text-muted">
+            <i class="bi bi-people fs-2 d-block mb-2"></i>
+            <p class="small mb-0">No applications received yet. Nearby job seekers are being dispatched.</p>
           </div>
         {% endif %}
       </div>
@@ -111,28 +111,28 @@
     <!-- Right Side Actions & Boost -->
     <div class="col-lg-4">
       <!-- Boost Card -->
-      <div class="lv-card p-4 mb-3 border-warning" style="background-color: #FFFDF5;">
-        <h6 class="fw-bold text-dark mb-1">Need people faster?</h6>
-        <p class="text-muted small mb-3">Boost for ₹49: first in the list for 24 hours with an Urgent tag.</p>
+      <div class="lv-card p-4 mb-4" style="background: rgba(214, 255, 80, 0.08); border: 1px solid rgba(214, 255, 80, 0.3);">
+        <h6 class="fw-bold text-white mb-1">Need People Urgently?</h6>
+        <p class="text-muted small mb-3">Boost for ₹49 to pin this listing to the top of the feed with an urgent badge for 24 hours.</p>
         {% if job.is_currently_boosted %}
           <div class="alert alert-success py-2 px-3 small mb-0 text-center">
-            <i class="bi bi-check-circle-fill me-1"></i> Urgent boost active!
+            <i class="bi bi-check-circle-fill me-1"></i> Urgent Boost is Active
           </div>
         {% else %}
           <a href="{{ url_for('employer.boost_job', job_id=job.id) }}" class="btn btn-lv-primary w-100 fw-bold">
-            Boost for ₹49
+            <i class="bi bi-lightning-charge-fill me-1"></i> Boost Listing for ₹49
           </a>
         {% endif %}
       </div>
 
       <!-- Mark Job Complete Card -->
       <div class="lv-card p-4">
-        <h6 class="fw-bold text-dark mb-1">{{ job.people_needed - job.hired_count }} more needed</h6>
-        <p class="text-muted small mb-3">Shortlist or hire from the list.</p>
+        <h6 class="fw-bold text-white mb-1">{{ job.people_needed - job.hired_count }} More Helpers Needed</h6>
+        <p class="text-muted small mb-3">Close this shift once work has been completed.</p>
         <form method="POST" action="{{ url_for('employer.complete_job', job_id=job.id) }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button type="submit" class="btn btn-lv-success w-100 fw-bold">
-            Mark job complete
+            <i class="bi bi-check2-circle me-1"></i> Mark Shift Completed
           </button>
         </form>
       </div>

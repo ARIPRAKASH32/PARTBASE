@@ -1,95 +1,92 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container py-3">
+<div class="container py-4">
   <div class="mb-3">
-    <a href="{{ url_for('seeker.job_detail', job_id=job.id) }}" class="text-decoration-none text-muted fw-semibold small">
-      <i class="bi bi-arrow-left me-1"></i> Back to job
+    <a href="{{ url_for('seeker.job_detail', job_id=job.id) }}" class="jp-cta-link small">
+      <i class="bi bi-arrow-left me-1"></i> Back to Job Details
     </a>
   </div>
 
-  <div class="row">
+  <div class="row g-4">
     <!-- Left Report Form Card -->
-    <div class="col-lg-7 mb-3">
-      <div class="lv-card p-4">
-        <h3 class="fw-bold mb-1">Report this job</h3>
-        <p class="text-muted small mb-4">{{ job.title }} · {{ job.shop.shop_name }}</p>
+    <div class="col-lg-7">
+      <div class="lv-card p-4 p-md-5 mb-4">
+        <h3 class="fw-bold mb-1 text-white">Report Job Listing</h3>
+        <p class="text-muted small mb-4">
+          Flagging <strong class="text-white">{{ job.title }}</strong> at {{ job.shop.shop_name if job.shop else 'Neighborhood Store' }}.
+        </p>
 
         <form method="POST" action="{{ url_for('seeker.report_job', job_id=job.id) }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
           <!-- Radio Options -->
-          <div class="mb-3">
-            <label class="form-label fw-bold small text-muted">SELECT REASON</label>
+          <div class="mb-4">
+            <label class="small fw-bold text-muted text-uppercase d-block mb-3" style="letter-spacing: 0.5px;">Primary Reason for Flagging</label>
 
-            <div class="form-check p-3 border rounded mb-2 bg-light">
-              <input class="form-check-input" type="radio" name="reason" id="r1" value="asked_money" checked>
-              <label class="form-check-label fw-semibold" for="r1">
-                Asked me for money (registration fee, advance, deposit)
-              </label>
-            </div>
+            <label class="d-flex align-items-center p-3 rounded-3 mb-2 cursor-pointer" style="background: rgba(255, 255, 255, 0.1); border: 1.5px solid rgba(255, 255, 255, 0.4);">
+              <input class="form-check-input mt-0 me-3" type="radio" name="reason" id="r1" value="asked_money" checked>
+              <div class="small fw-semibold text-white">
+                <i class="bi bi-cash-coin text-danger me-1"></i> Asked for money (registration fee, advance, deposit)
+              </div>
+            </label>
 
-            <div class="form-check p-3 border rounded mb-2">
-              <input class="form-check-input" type="radio" name="reason" id="r2" value="fake_shop">
-              <label class="form-check-label fw-semibold" for="r2">
-                Fake or no such shop
-              </label>
-            </div>
+            <label class="d-flex align-items-center p-3 rounded-3 mb-2 cursor-pointer" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--jp-border-card);">
+              <input class="form-check-input mt-0 me-3" type="radio" name="reason" id="r2" value="fake_shop">
+              <div class="small fw-semibold text-white">
+                <i class="bi bi-shop-window text-warning me-1"></i> Fake store or nonexistent address
+              </div>
+            </label>
 
-            <div class="form-check p-3 border rounded mb-2">
-              <input class="form-check-input" type="radio" name="reason" id="r3" value="wrong_location_pay">
-              <label class="form-check-label fw-semibold" for="r3">
-                Wrong location or pay
-              </label>
-            </div>
+            <label class="d-flex align-items-center p-3 rounded-3 mb-2 cursor-pointer" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--jp-border-card);">
+              <input class="form-check-input mt-0 me-3" type="radio" name="reason" id="r3" value="wrong_location_pay">
+              <div class="small fw-semibold text-white">
+                <i class="bi bi-geo-alt text-info me-1"></i> Incorrect location or mismatched compensation
+              </div>
+            </label>
 
-            <div class="form-check p-3 border rounded mb-2">
-              <input class="form-check-input" type="radio" name="reason" id="r4" value="rude_unsafe">
-              <label class="form-check-label fw-semibold" for="r4">
-                Rude or unsafe
-              </label>
-            </div>
+            <label class="d-flex align-items-center p-3 rounded-3 mb-2 cursor-pointer" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--jp-border-card);">
+              <input class="form-check-input mt-0 me-3" type="radio" name="reason" id="r4" value="rude_unsafe">
+              <div class="small fw-semibold text-white">
+                <i class="bi bi-shield-x text-danger me-1"></i> Rude, suspicious, or unsafe environment
+              </div>
+            </label>
 
-            <div class="form-check p-3 border rounded mb-2">
-              <input class="form-check-input" type="radio" name="reason" id="r5" value="other">
-              <label class="form-check-label fw-semibold" for="r5">
-                Something else
-              </label>
-            </div>
+            <label class="d-flex align-items-center p-3 rounded-3 mb-2 cursor-pointer" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--jp-border-card);">
+              <input class="form-check-input mt-0 me-3" type="radio" name="reason" id="r5" value="other">
+              <div class="small fw-semibold text-white">
+                <i class="bi bi-three-dots text-muted me-1"></i> Other reason
+              </div>
+            </label>
           </div>
 
           <div class="mb-4">
-            <label class="form-label small fw-semibold">Add details (optional)</label>
-            <textarea name="details" class="form-control" rows="3" placeholder="What happened?"></textarea>
+            <label class="form-label small fw-semibold">Incident Details (Optional)</label>
+            <textarea name="details" class="form-control" rows="3" placeholder="Provide extra context such as WhatsApp messages, phone call details..."></textarea>
           </div>
 
-          <button type="submit" class="btn btn-lv-danger w-100 py-2 fw-bold">
-            Send report
+          <button type="submit" class="btn btn-danger w-100 py-2 fs-6 fw-bold">
+            <i class="bi bi-flag-fill me-1"></i> Submit Report to Moderation
           </button>
         </form>
       </div>
     </div>
 
-    <!-- Right Moderation Info Card -->
+    <!-- Right Safety Card -->
     <div class="col-lg-5">
       <div class="lv-card p-4">
-        <h5 class="fw-bold mb-3">What happens next</h5>
-        <div class="d-flex align-items-start gap-2 mb-3">
-          <span class="badge bg-primary rounded-circle">1</span>
-          <span class="small text-dark">We review every report within 24 hours.</span>
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-shield-check text-success fs-3"></i>
+          <div>
+            <h5 class="fw-bold text-white mb-0">Safety Guarantee</h5>
+            <small class="text-muted">Zero Fee Policy</small>
+          </div>
         </div>
-        <div class="d-flex align-items-start gap-2 mb-3">
-          <span class="badge bg-primary rounded-circle">2</span>
-          <span class="small text-dark">After 3 reports the job is auto-hidden until reviewed.</span>
-        </div>
-        <div class="d-flex align-items-start gap-2 mb-4">
-          <span class="badge bg-primary rounded-circle">3</span>
-          <span class="small text-dark">You can follow status in Support → My tickets.</span>
-        </div>
-
-        <div class="alert alert-warning py-3 px-3 small mb-0 border-0" style="background-color: #FFF3CD; color: #664D03;">
-          <i class="bi bi-telephone-exclamation-fill me-1"></i>
-          <strong>Already paid money?</strong> Call the National Cyber Crime helpline <strong>1930</strong>.
+        <p class="text-white-50 small mb-3">
+          PARTBASE micro-jobs are strictly free for job seekers. If any business asks for money, registration charges, or card details, our admin team auto-hides the listing and blocks the merchant.
+        </p>
+        <div class="p-3 rounded-3 small" style="background: rgba(198, 244, 50, 0.08); border: 1px solid rgba(198, 244, 50, 0.25); color: #C6F432;">
+          <i class="bi bi-headset me-1"></i> Need urgent assistance? Call our community helpline or open a 24/7 ticket.
         </div>
       </div>
     </div>

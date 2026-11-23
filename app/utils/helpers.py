@@ -94,3 +94,31 @@ def check_and_auto_hide_job(job_id):
             return True
     db.session.commit()
     return False
+
+def format_inr(amount):
+    """
+    Format amount into Indian numbering system with ₹ symbol (e.g., ₹1,00,000).
+    """
+    if amount is None:
+        return "₹0"
+    try:
+        val = int(amount)
+    except (ValueError, TypeError):
+        return f"₹{amount}"
+
+    s = str(abs(val))
+    if len(s) <= 3:
+        formatted = s
+    else:
+        last3 = s[-3:]
+        rest = s[:-3]
+        groups = []
+        while len(rest) > 2:
+            groups.insert(0, rest[-2:])
+            rest = rest[:-2]
+        if rest:
+            groups.insert(0, rest)
+        formatted = ",".join(groups) + "," + last3
+
+    prefix = "-₹" if val < 0 else "₹"
+    return f"{prefix}{formatted}"

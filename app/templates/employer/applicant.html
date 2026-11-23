@@ -1,89 +1,93 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container py-3">
+<div class="container py-4">
   <div class="mb-3">
-    <a href="{{ url_for('employer.job_detail', job_id=application.job_id) }}" class="text-decoration-none text-muted fw-semibold small">
-      <i class="bi bi-arrow-left me-1"></i> Back to applicants
+    <a href="{{ url_for('employer.job_detail', job_id=application.job_id) }}" class="jp-cta-link small">
+      <i class="bi bi-arrow-left me-1"></i> Back to Applicants Queue
     </a>
   </div>
 
-  <div class="row">
+  <div class="row g-4">
     <!-- Left Applicant Profile Card -->
-    <div class="col-lg-7 mb-3">
-      <div class="lv-card p-4">
-        <div class="d-flex justify-content-between align-items-start mb-2">
+    <div class="col-lg-7">
+      <div class="lv-card p-4 p-md-5 mb-4">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
           <div>
-            <h3 class="fw-bold mb-1 text-dark">{{ seeker.name or 'Seeker' }}</h3>
-            <div class="d-flex align-items-center gap-2 small">
+            <h3 class="fw-bold mb-1 text-white">{{ seeker.name or 'Seeker' }}</h3>
+            <div class="d-flex align-items-center flex-wrap gap-2 small">
               <span class="text-warning fw-bold">★ {{ profile.rating_avg or 4.8 }}</span>
-              <span class="chip-verified"><i class="bi bi-shield-check"></i> Phone verified</span>
+              <span class="jp-chip jp-chip-verified"><i class="bi bi-shield-check me-1"></i>Phone Verified</span>
               <span class="text-muted">· {{ distance }} km away</span>
             </div>
           </div>
-          <a href="{{ url_for('support.support') }}" class="text-danger small text-decoration-none fw-semibold">
-            <i class="bi bi-flag me-1"></i> Report applicant
+          <a href="{{ url_for('support.support') }}" class="small text-danger text-decoration-none fw-semibold">
+            <i class="bi bi-flag me-1"></i> Report Issue
           </a>
         </div>
 
-        <hr class="my-3 text-muted">
+        <div class="jp-card-divider my-4"></div>
 
-        <div class="mb-3">
-          <label class="form-label small fw-bold text-muted text-uppercase">Free</label>
-          <div class="tag-btn-group">
+        <div class="mb-4">
+          <label class="small fw-bold text-muted text-uppercase d-block mb-2" style="letter-spacing: 0.5px;">Availability</label>
+          <div class="d-flex flex-wrap gap-2">
             {% for slot in (seeker.free_slots or 'Anytime').split(',') %}
-              <span class="tag-btn active">{{ slot.replace('_', ' ').capitalize() }}</span>
+              <span class="jp-chip jp-chip-cat">{{ slot.replace('_', ' ').capitalize() }}</span>
             {% endfor %}
           </div>
         </div>
 
-        <div class="mb-3">
-          <label class="form-label small fw-bold text-muted text-uppercase">Skills</label>
-          <div class="tag-btn-group">
+        <div class="mb-4">
+          <label class="small fw-bold text-muted text-uppercase d-block mb-2" style="letter-spacing: 0.5px;">Preferred Categories &amp; Skills</label>
+          <div class="d-flex flex-wrap gap-2">
             {% for interest in (profile.interests or 'General helper').split(',') %}
-              <span class="tag-btn">{{ interest.replace('_', ' ').capitalize() }}</span>
+              <span class="jp-chip">{{ interest.replace('_', ' ').capitalize() }}</span>
             {% endfor %}
           </div>
         </div>
 
         {% if application.note %}
           <div class="mb-4">
-            <label class="form-label small fw-bold text-muted text-uppercase">Note from {{ seeker.name }}</label>
-            <div class="p-3 bg-light rounded border text-dark">
+            <label class="small fw-bold text-muted text-uppercase d-block mb-2" style="letter-spacing: 0.5px;">Message from Applicant</label>
+            <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--jp-border-card); color: var(--jp-gray-text);">
               "{{ application.note }}"
             </div>
           </div>
         {% endif %}
 
         <div class="text-muted small">
-          Past jobs: <strong>{{ profile.jobs_completed or 3 }} completed</strong>, 0 reports.
+          Verified history: <strong class="text-white">{{ profile.jobs_completed or 3 }} shifts completed</strong> on PARTBASE.
         </div>
       </div>
     </div>
 
-    <!-- Right Hire Confirmation Card -->
+    <!-- Right Actions Card -->
     <div class="col-lg-5">
-      <div class="lv-card p-4 border-success">
-        <h4 class="fw-bold mb-2">Hire {{ seeker.name }}?</h4>
-        <p class="text-muted small mb-4">
-          {{ application.job.title }} ·
-          {% if application.job.day_option == 'today' %}Today{% else %}Weekend{% endif %}
-          {{ application.job.time_range or '' }} ·
-          ₹{{ application.job.pay_amount }}/{{ application.job.pay_type }}.
-          She/he gets a notification with your shop address.
-        </p>
+      <div class="lv-card p-4 p-md-5">
+        <h5 class="fw-bold text-white mb-2">Hiring Decision</h5>
+        <p class="text-muted small mb-4">Direct contact is established once status is updated.</p>
 
-        <form method="POST" action="{{ url_for('employer.update_applicant_status', app_id=application.id) }}" class="prevent-double-submit">
+        <form method="POST" action="{{ url_for('employer.update_applicant_status', app_id=application.id) }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <input type="hidden" name="status" value="hired">
 
-          <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-lv-success py-2 fw-bold">
-              Confirm hire
+          {% if seeker.phone %}
+            <div class="mb-3">
+              <a href="tel:{{ seeker.phone }}" class="btn btn-lv-outline w-100 py-2 fw-semibold">
+                <i class="bi bi-telephone-fill text-success me-1"></i> Call {{ seeker.name or 'Applicant' }}
+              </a>
+            </div>
+          {% endif %}
+
+          <div class="d-flex flex-column gap-2 mb-3">
+            <button type="submit" name="status" value="hired" class="btn btn-lv-success w-100 py-2 fw-bold">
+              <i class="bi bi-check2-circle me-1"></i> Confirm &amp; Hire Seeker
             </button>
-            <a href="{{ url_for('employer.job_detail', job_id=application.job_id) }}" class="btn btn-lv-outline py-2 fw-semibold">
-              Cancel
-            </a>
+            <button type="submit" name="status" value="shortlisted" class="btn btn-lv-primary w-100 py-2 fw-semibold">
+              <i class="bi bi-star me-1"></i> Shortlist Candidate
+            </button>
+            <button type="submit" name="status" value="rejected" class="btn btn-outline-danger w-100 py-2 fw-semibold">
+              Decline Application
+            </button>
           </div>
         </form>
       </div>

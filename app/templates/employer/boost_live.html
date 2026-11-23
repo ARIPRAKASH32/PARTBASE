@@ -5,19 +5,19 @@
   <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5 text-center">
       <div class="lv-card p-4 p-md-5">
-        <div class="mb-3">
-          <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 72px; height: 72px; font-size: 2.2rem;">
-            ✓
+        <div class="mb-4">
+          <div class="rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 76px; height: 76px; background: rgba(214, 255, 80, 0.15); border: 2px solid var(--jp-orange); color: var(--jp-orange); font-size: 2.2rem;">
+            <i class="bi bi-lightning-charge-fill"></i>
           </div>
         </div>
 
-        <h2 class="fw-bold mb-2">Boost is live</h2>
-        <p class="text-muted mb-4">
-          <strong>{{ session.get('boosted_job_title', 'Your job') }}</strong> now shows first with an Urgent tag for 24 hours.
+        <h3 class="fw-bold text-white mb-2">Urgent Boost Activated!</h3>
+        <p class="text-muted small mb-4">
+          <strong class="text-white">{{ session.get('boosted_job_title', 'Your shift listing') }}</strong> has been pinned to the top of the feed across Chennai clusters for the next 24 hours.
         </p>
 
         <a href="{{ url_for('employer.posts') }}" class="btn btn-lv-primary py-2 px-4 fw-bold">
-          Back to job
+          <i class="bi bi-arrow-left me-1"></i> Back to My Postings
         </a>
       </div>
     </div>

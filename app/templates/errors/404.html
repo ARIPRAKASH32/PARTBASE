@@ -2,12 +2,14 @@
 
 {% block content %}
 <div class="container py-5 text-center">
-  <div class="lv-card p-5 mx-auto" style="max-width: 500px;">
-    <h1 class="display-3 fw-bold text-primary mb-2">404</h1>
-    <h4 class="fw-bold text-dark mb-3">Page not found</h4>
-    <p class="text-muted small mb-4">The micro-job or page you were looking for doesn't exist or has moved.</p>
+  <div class="lv-card p-5 mx-auto" style="max-width: 520px;">
+    <div class="stat-number mb-2 text-primary" style="font-size: 4rem;">404</div>
+    <h3 class="fw-bold text-white mb-3">Listing or Route Not Found</h3>
+    <p class="text-muted small mb-4">
+      The shift listing or destination you are searching for has concluded, expired, or relocated.
+    </p>
     <a href="{{ url_for('auth.landing') }}" class="btn btn-lv-primary px-4 fw-semibold">
-      Back to PARTBASE
+      <i class="bi bi-house-door-fill me-1"></i> Return to Feed
     </a>
   </div>
 </div>

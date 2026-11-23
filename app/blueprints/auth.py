@@ -8,7 +8,7 @@ auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/")
 def landing():
-    sample_jobs = Job.query.filter_by(status="open").limit(2).all()
+    sample_jobs = Job.query.filter_by(status="open").order_by(Job.id.desc()).limit(6).all()
     return render_template("landing.html", sample_jobs=sample_jobs)
 
 @auth_bp.route("/demo-login/<role>")
@@ -31,7 +31,7 @@ def demo_login(role):
         user.active_role = "seeker"
         db.session.commit()
         flash("Logged in as Demo Seeker (Priya K)", "success")
-        return redirect(url_for("seeker.jobs"))
+        return redirect(url_for("seeker.dashboard"))
 
     elif role == "employer":
         user = User.query.filter_by(phone="+919876543210").first()
@@ -50,7 +50,7 @@ def demo_login(role):
         user.active_role = "employer"
         db.session.commit()
         flash("Logged in as Demo Employer (Sri Murugan Tailors)", "success")
-        return redirect(url_for("employer.posts"))
+        return redirect(url_for("employer.dashboard"))
 
     elif role == "admin":
         user = User.query.filter_by(phone="+919876500000").first()
@@ -65,7 +65,7 @@ def demo_login(role):
         session["role"] = "admin"
         session["is_admin"] = True
         flash("Logged in as PARTBASE Admin", "success")
-        return redirect(url_for("admin.reports"))
+        return redirect(url_for("admin.dashboard"))
 
     return redirect(url_for("auth.landing"))
 
@@ -164,4 +164,13 @@ def terms():
 @auth_bp.route("/privacy")
 def privacy():
     return render_template("landing.html", show_modal="privacy")
+
+@auth_bp.route("/set-lang/<lang>")
+def set_language(lang):
+    if lang in ["en", "ta"]:
+        session["lang"] = lang
+    referrer = request.referrer
+    if referrer and request.host in referrer:
+        return redirect(referrer)
+    return redirect(url_for("auth.landing"))
 

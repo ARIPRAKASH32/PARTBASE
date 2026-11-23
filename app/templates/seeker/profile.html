@@ -4,34 +4,37 @@
 <div class="container py-4">
   <div class="row justify-content-center">
     <div class="col-lg-6 col-md-8">
-      <h3 class="fw-bold mb-3">Profile</h3>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold mb-0 text-white">Seeker Profile</h3>
+        <span class="badge-chennai">Chennai Network</span>
+      </div>
 
-      <div class="lv-card p-4">
+      <div class="lv-card p-4 p-md-5">
         <!-- Top Info Header -->
-        <div class="d-flex justify-content-between align-items-start mb-2">
+        <div class="d-flex justify-content-between align-items-start mb-3">
           <div>
-            <h4 class="fw-bold mb-0 text-dark">{{ user.name or 'Seeker' }}</h4>
-            <div class="text-muted small mt-1">
-              ★ {{ profile.rating_avg if profile else '0.0' }} ·
-              {{ profile.jobs_completed if profile else 0 }} jobs completed ·
-              {{ mask_phone(user.phone) }}
+            <h4 class="fw-bold mb-1 text-white">{{ user.name or 'Seeker' }}</h4>
+            <div class="text-muted small">
+              <span class="text-warning">★ {{ profile.rating_avg if profile else '0.0' }}</span> ·
+              {{ profile.jobs_completed if profile else 0 }} completed shifts ·
+              <span class="font-monospace text-white-50">{{ mask_phone(user.phone) }}</span>
             </div>
           </div>
-          <span class="chip-verified"><i class="bi bi-shield-check"></i> Phone verified</span>
+          <span class="jp-chip jp-chip-verified"><i class="bi bi-shield-check me-1"></i>Verified</span>
         </div>
 
-        <hr class="my-3 text-muted">
+        <div class="jp-card-divider my-4"></div>
 
         <form method="POST" action="{{ url_for('support.profile') }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-          <div class="mb-3">
-            <label class="form-label fw-semibold small">Name</label>
+          <div class="mb-4">
+            <label class="form-label fw-semibold small">Full Name</label>
             <input type="text" name="name" value="{{ user.name or '' }}" class="form-control" required>
           </div>
 
-          <div class="mb-3">
-            <label class="form-label fw-semibold small">Area</label>
+          <div class="mb-4">
+            <label class="form-label fw-semibold small">Neighborhood Cluster</label>
             <select name="area_id" class="form-select">
               {% for a in areas %}
                 <option value="{{ a.id }}" {% if user.area_id == a.id %}selected{% endif %}>
@@ -41,52 +44,44 @@
             </select>
           </div>
 
-          <div class="mb-3">
-            <label class="form-label fw-semibold small">Free</label>
-            <div class="tag-btn-group">
-              <label class="tag-btn {% if 'weekday_evening' in (user.free_slots or '') %}active{% endif %}">
-                <input type="checkbox" name="free_slots" value="weekday_evening" class="d-none" {% if 'weekday_evening' in (user.free_slots or '') %}checked{% endif %}>
-                Weekday evening
+          <div class="mb-4">
+            <label class="form-label fw-semibold small">Shift Availability Slots</label>
+            <div class="d-flex flex-wrap gap-2">
+              <label class="jp-chip cursor-pointer {% if 'weekday_evening' in (user.free_slots or '') %}jp-chip-cat{% endif %}">
+                <input type="checkbox" name="free_slots" value="weekday_evening" class="form-check-input mt-0 me-2" {% if 'weekday_evening' in (user.free_slots or '') %}checked{% endif %}>
+                Weekday Evenings
               </label>
-              <label class="tag-btn {% if 'weekend' in (user.free_slots or '') %}active{% endif %}">
-                <input type="checkbox" name="free_slots" value="weekend" class="d-none" {% if 'weekend' in (user.free_slots or '') %}checked{% endif %}>
-                Weekend
+              <label class="jp-chip cursor-pointer {% if 'weekend' in (user.free_slots or '') %}jp-chip-cat{% endif %}">
+                <input type="checkbox" name="free_slots" value="weekend" class="form-check-input mt-0 me-2" {% if 'weekend' in (user.free_slots or '') %}checked{% endif %}>
+                Weekend Only
               </label>
-              <label class="tag-btn {% if 'anytime' in (user.free_slots or '') %}active{% endif %}">
-                <input type="checkbox" name="free_slots" value="anytime" class="d-none" {% if 'anytime' in (user.free_slots or '') %}checked{% endif %}>
+              <label class="jp-chip cursor-pointer {% if 'anytime' in (user.free_slots or '') %}jp-chip-cat{% endif %}">
+                <input type="checkbox" name="free_slots" value="anytime" class="form-check-input mt-0 me-2" {% if 'anytime' in (user.free_slots or '') %}checked{% endif %}>
                 Anytime
               </label>
             </div>
           </div>
 
           <div class="mb-4">
-            <label class="form-label fw-semibold small">Interested in</label>
-            <div class="tag-btn-group">
-              {% set all_cats = [('shop_helper', 'Shop helper'), ('packing', 'Packing'), ('data_entry', 'Data entry'), ('tutoring', 'Tutoring'), ('delivery', 'Delivery'), ('event_staff', 'Event staff')] %}
-              {% set my_interests = (profile.interests or '') if profile else '' %}
-              {% for cat_val, cat_label in all_cats %}
-                <label class="tag-btn {% if cat_val in my_interests %}active{% endif %}">
-                  <input type="checkbox" name="interests" value="{{ cat_val }}" class="d-none" {% if cat_val in my_interests %}checked{% endif %}>
+            <label class="form-label fw-semibold small">Preferred Roles</label>
+            <div class="d-flex flex-wrap gap-2">
+              {% set categories = [('shop_helper', 'Shop Helper'), ('packing', 'Packing Staff'), ('data_entry', 'Data Entry'), ('tutoring', 'Tutoring'), ('delivery', 'Delivery'), ('event_staff', 'Event Staff')] %}
+              {% set my_interests = (user.seeker_profile.interests or '') if user.seeker_profile else '' %}
+              {% for cat_val, cat_label in categories %}
+                <label class="jp-chip cursor-pointer">
+                  <input type="checkbox" name="interests" value="{{ cat_val }}" class="form-check-input mt-0 me-2" {% if cat_val in my_interests %}checked{% endif %}>
                   {{ cat_label }}
                 </label>
               {% endfor %}
             </div>
           </div>
 
-          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pt-2">
-            <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-lv-primary px-4 fw-semibold">Save</button>
-              <a href="{{ url_for('support.switch_role') }}" class="btn btn-lv-outline fw-semibold">Switch to hiring</a>
-            </div>
-            <a href="{{ url_for('auth.logout') }}" class="text-danger small text-decoration-none fw-semibold">Sign out</a>
-          </div>
+          <button type="submit" class="btn btn-lv-primary w-100 py-2 fs-6 fw-bold">
+            Save Profile Updates
+          </button>
         </form>
       </div>
     </div>
   </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="{{ url_for('static', filename='js/filters.js') }}"></script>
 {% endblock %}
