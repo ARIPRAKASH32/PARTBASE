@@ -165,3 +165,12 @@ def terms():
 def privacy():
     return render_template("landing.html", show_modal="privacy")
 
+@auth_bp.route("/set-lang/<lang>")
+def set_language(lang):
+    if lang in ["en", "ta"]:
+        session["lang"] = lang
+    referrer = request.referrer
+    if referrer and request.host in referrer:
+        return redirect(referrer)
+    return redirect(url_for("auth.landing"))
+
