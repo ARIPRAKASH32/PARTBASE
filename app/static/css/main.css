@@ -614,6 +614,44 @@ a:hover {
 }
 
 /* ==========================================================================
+   LOGIN CARD PLANS (MULTI-ROLE TOGGLE)
+   ========================================================================== */
+.plan-toggle-group {
+  display: flex !important;
+  background: #121316 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 14px !important;
+  padding: 4px !important;
+  margin-bottom: 1.75rem !important;
+}
+
+.plan-toggle-btn {
+  flex: 1 !important;
+  text-align: center !important;
+  padding: 0.65rem 0.75rem !important;
+  border-radius: 10px !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  color: #777E90 !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.4rem !important;
+}
+
+.plan-toggle-btn.active {
+  background: #23272F !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.plan-toggle-btn:hover:not(.active) {
+  color: #FFFFFF !important;
+}
+
+/* ==========================================================================
    FORMS & INPUTS
    ========================================================================== */
 .form-control, .form-select, input[type="text"], input[type="tel"], input[type="number"], textarea, select {
